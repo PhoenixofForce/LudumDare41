@@ -1,4 +1,4 @@
-92
+106
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -8,17 +8,18 @@ path_r 32 16 16 16
 path_bl 0 32 16 16
 path_b 16 32 16 16
 path_br 32 32 16 16
-tower_archer 64 14 15 18
-enemy_slime 82 20 12 11
+tower_archer 81 46 15 18
+tower_mage_0 80 70 14 26
+tower_mage_1 96 70 14 26
+tower_mage_2 112 70 14 26
+enemy_slime_r 66 35 12 11
+enemy_slime_g 66 19 12 11
+enemy_slime_b 66 3 12 11
 material_gold 0 48 32 16
 material_wood 0 64 32 16
 material_stone 0 80 32 16
 material_metal 0 96 32 16
 material_energy 0 112 32 16
-buidling_windmill 96 48 30 32
-building_barn 97 17 14 15
-building_house 96 32 14 16
-building_lumber 96 32 21 16
 lifebar_full 80 14 1 2
 lifebar_empty 81 14 1 2
 a 100 144 5 7
@@ -90,4 +91,17 @@ button_a 162 227 11 11
 button_b 162 215 11 11
 button_x 150 227 11 11
 button_y 150 215 11 11
+particle_arrow_trail_big 57 166 5 5
+particle_arrow_trail 58 168 3 3
+particle_magic_proj 66 166 4 4
+particle_magic_trail_0_big 71 166 2 2
+particle_magic_trail_0 71 169 1 1
+particle_magic_trail_1_big 74 166 2 2
+particle_magic_trail_1 74 169 1 1
+particle_slime_r_big 83 166 2 2
+particle_slime_r 83 169 1 1
+particle_slime_g_big 80 166 2 2
+particle_slime_g 80 169 1 1
+particle_slime_b_big 77 166 2 2
+particle_slime_b 66 169 1 1
 selection 0 192 32 32
