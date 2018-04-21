@@ -102,7 +102,7 @@ public class Game {
 		int i = 0;
 		for(Material m: Material.values()) {
 			ressources.put(m, 100);
-			Text t = new Text(-0.95f, 0.88f - i*0.125f, -100, "<"+m.toString().toLowerCase() +"> 0", 0.08f, false, 0f, 0f, Color.WHITE);
+			Text t = new Text(-0.99f, 0.95f - i*0.0625f, -100, "<"+m.toString().toLowerCase() +"> 0", 0.04f, false, 0f, 0f, Color.WHITE);
 			this.addGameObject(t);
 			ressourceIndicator.put(m, t);
 			i++;

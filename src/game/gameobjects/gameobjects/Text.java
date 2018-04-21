@@ -209,7 +209,7 @@ public class Text extends AbstractGameObject implements Drawable {
 			float y = centeredY - 0.15f * size;
 
 			for (float[] v : Constants.VERTEX_POS) {
-				locations.put(x + v[0] * (size / (useCamera ? 1 : aspectRatio)));
+				locations.put(x + v[0] * (size / (useCamera ? 1 : aspectRatio)) * texture.width/texture.height);
 				locations.put(y + v[1] * size);
 
 				texLocations.put(texture.x + v[0] * texture.width);
