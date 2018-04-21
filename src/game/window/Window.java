@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Window {
 	private float aspect = Constants.WINDOW_WIDTH / Constants.WINDOW_HEIGHT;
-	private long window, audioDevice, audioContext;            //OpenGL IDs for the game.window and the audio context
+	private long window;            //OpenGL IDs for the game.window and the audio context
 	private Keyboard keyboard;
 	private Camera camera;
 	private LightHandler lightHandler;

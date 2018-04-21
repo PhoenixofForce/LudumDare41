@@ -1,7 +1,10 @@
 package game;
 
+import game.data.hitbox.HitBox;
 import game.gameobjects.GameObject;
+import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
+import game.gameobjects.gameobjects.wall.Background;
 import game.util.TimeUtil;
 import game.window.Camera;
 import game.window.Drawable;
@@ -12,6 +15,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Game {
+	public static final int PATH_WIDTH = 16;
+	public static final int PATH_HEIGHT = 9;
+
 	private Window window;							//displays the game
 
 	private int gameTick;							//current tick of the game (starts at 0) -> 60 Ticks Per Second
@@ -35,21 +41,32 @@ public class Game {
 		gameObjects = new LinkedList<>();
 		toRemove = new ConcurrentLinkedQueue<>();
 		toAdd = new ConcurrentLinkedQueue<>();
+
+		this.addGameObject(new CameraController());
+
+		generatePath();
+		Map<HitBox, String> background = new HashMap<>();
+		for (int x = 0; x < PATH_WIDTH; x++) {
+			for (int y = 0; y < PATH_HEIGHT; y++) {
+				background.put(new HitBox(x, y, 1, 1), path[x][y] ? "path_br" : "grass");
+			}
+		}
+		this.addGameObject(new Background(background));
 	}
 
 	private void generatePath() {
 
-		path = new boolean[16][9];
+		path = new boolean[PATH_WIDTH][PATH_HEIGHT];
 		Random r = new Random();
-		int yDump = r.nextInt(9);
+		int yDump = r.nextInt(PATH_HEIGHT);
 
-		for(int x = 0; x < 16; x++) {
+		for(int x = 0; x < PATH_WIDTH; x++) {
 			path[x][yDump] = true;
 
 			int mode = r.nextInt(3);
 			if(x > 2 && path[x-2][yDump]) {
 				if(mode == 2 && yDump > 0) yDump--;
-				else if(mode == 1 && yDump < 8) yDump++;
+				else if(mode == 1 && yDump < PATH_HEIGHT-1) yDump++;
 				path[x][yDump] = true;
 			}
 		}
@@ -111,6 +128,8 @@ public class Game {
 	 **/
 	private void handleInput() {
 		Keyboard keyboard = window.getKeyboard();
+
+		if (keyboard.isPressed(Keyboard.KEY_R)) getCamera().addScreenshake(0.01f);
 
 		//TODO: Mouse support?
 	}

@@ -14,8 +14,8 @@ public class CameraController extends AbstractGameObject {
 
 	@Override
 	public void update(Game game) {
-		game.getCamera().setPosition(0, 0);
-		game.getCamera().setZoom(1);
+		game.getCamera().setPosition(Game.PATH_WIDTH/2.0f, Game.PATH_HEIGHT/2.0f);
+		game.getCamera().setZoom(0.1f);
 	}
 
 	@Override
