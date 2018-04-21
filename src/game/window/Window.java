@@ -184,7 +184,7 @@ public class Window {
 		GL.createCapabilities();
 		System.out.println(String.format("OpenGL Version %s", GL11.glGetString(GL11.GL_VERSION)));
 
-		GL11.glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+		GL11.glClearColor(133f/255, 170f/255, 229f/255, 0.0f);
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_CULL_FACE);

@@ -1,8 +1,10 @@
 package game;
 
+import game.data.Sprite;
 import game.data.hitbox.HitBox;
 import game.gameobjects.GameObject;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
+import game.gameobjects.gameobjects.entities.entities.ScreenEntity;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
 import game.gameobjects.gameobjects.wall.Background;
 import game.util.TimeUtil;
@@ -67,6 +69,7 @@ public class Game {
 			}
 		}
 		this.addGameObject(new Background(background));
+		this.addGameObject(new ScreenEntity(new HitBox(-1, 1, 0.1f, 0.1f), -5, new Sprite(100, "path_tl"), 0, 1));
 	}
 
 	private void generatePath() {
@@ -144,7 +147,8 @@ public class Game {
 	private void handleInput() {
 		Keyboard keyboard = window.getKeyboard();
 
-		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1)) getCamera().addScreenshake(0.01f);
+		int a = keyboard.getScrollAmount();
+		getCamera().addScreenshake(Math.abs(a) * 0.01f);
 	}
 
 	/**

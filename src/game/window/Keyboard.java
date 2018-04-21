@@ -13,6 +13,9 @@ import java.util.Map;
 public class Keyboard {
 
 	private Map<Integer, Float> keys;			//Stores how much every key is pressed
+	private int mouseX;
+	private int mouseY;
+	private int scrollAmount;
 
 	/**
 	 * creates a Keyboard for the given glfw game.window
@@ -20,6 +23,10 @@ public class Keyboard {
 	 */
 	public Keyboard(long window) {
 		this.keys = new HashMap<>();
+
+		this.mouseX = 0;
+		this.mouseY = 0;
+		this.scrollAmount = 0;
 
 		GLFW.glfwSetKeyCallback(window, (window_, key, scancode, action, mods) -> {
 			if (key == GLFW.GLFW_KEY_UNKNOWN) return;
@@ -30,6 +37,7 @@ public class Keyboard {
 				keys.put(30*16 + key, 1f);
 			}
 		});
+
 		GLFW.glfwSetMouseButtonCallback(window, (window_,key, action, mods) -> {
 			if (action == GLFW.GLFW_RELEASE) {
 				keys.put(-key-1, 0f);
@@ -37,6 +45,17 @@ public class Keyboard {
 				keys.put(-key-1, 1f);
 			}
 		});
+
+		GLFW.glfwSetScrollCallback(window, (window_, xOffset, yOffset) -> {
+			scrollAmount += yOffset;
+		});
+
+		GLFW.glfwSetCursorPosCallback(window, (window_, xPos, yPos) -> {
+			this.mouseX = (int) xPos;
+			this.mouseY = (int) yPos;
+		});
+
+
 	}
 
 	/**
@@ -55,6 +74,21 @@ public class Keyboard {
 	 */
 	public float getPressed(int keyCode) {
 		return keys.getOrDefault(keyCode, 0f);
+	}
+
+
+	public int getMouseX() {
+		return mouseX;
+	}
+
+	public int getMouseY() {
+		return mouseY;
+	}
+
+	public int getScrollAmount() {
+		int a = scrollAmount;
+		scrollAmount = 0;
+		return a;
 	}
 
 	/**

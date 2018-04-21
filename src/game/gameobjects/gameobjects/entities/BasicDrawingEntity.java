@@ -54,7 +54,7 @@ public abstract class BasicDrawingEntity extends AbstractGameObject implements D
 		if (useCamera) {
 			shader.setBounds(hitBox.getCenterX() - bounds.width / (2 * (float) Constants.PIXEL_PER_TILE), hitBox.getCenterY() - bounds.height / (2 * (float) Constants.PIXEL_PER_TILE), bounds.width / ((float) Constants.PIXEL_PER_TILE), bounds.height / ((float) Constants.PIXEL_PER_TILE));
 		} else {
-			shader.setBounds(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+			shader.setBounds(hitBox.getX(), hitBox.getY(), hitBox.getWidth(), hitBox.getHeight());
 		}
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);

@@ -1,7 +1,9 @@
 package game.data.hitbox;
 
 public class HitBox {
-	public float x, y, width, height;
+	private float x, y, width, height;
+	private HitBox anchor;
+	private float anchorX, anchorY;
 	public HitBoxType type;
 
 	public HitBox(float x, float y, float width, float height) {
@@ -20,14 +22,80 @@ public class HitBox {
 		this.type = type;
 	}
 
+	public HitBox(HitBox anchor, float anchorX, float anchorY, float width, float height) {
+		this.width = width;
+		this.height = height;
+		this.anchor = anchor;
+		this.anchorX = anchorX;
+		this.anchorY = anchorY;
+		this.type = HitBoxType.BLOCKING;
+	}
+
+	public HitBox(HitBox anchor, float anchorX, float anchorY, float width, float height, HitBoxType type) {
+		this.width = width;
+		this.height = height;
+		this.anchor = anchor;
+		this.anchorX = anchorX;
+		this.anchorY = anchorY;
+		this.type = type;
+	}
+
+	public float getY() {
+		if (anchor != null) return anchor.getY() + anchorY * anchor.getHeight();
+		return y;
+	}
+
+	public float getX() {
+		if (anchor != null) return anchor.getX() + anchorX * anchor.getWidth();
+		return x;
+	}
+
+	public float getWidth() {
+		return width;
+	}
+
+	public float getHeight() {
+		return height;
+	}
+
+	public void setHeight(float height) {
+		this.height = height;
+	}
+
+	public void setWidth(float width) {
+		this.width = width;
+	}
+
+	public void setX(float x) {
+		this.x = x;
+		if (anchor != null) {
+			y = getY();
+			anchor = null;
+		}
+	}
+
+	public void setY(float y) {
+		this.y = y;
+		if (anchor != null) {
+			x = getX();
+			anchor = null;
+		}
+	}
+
+	public void setAnchor(HitBox anchor, float anchorX, float anchorY) {
+		this.anchorX = anchorX;
+		this.anchorY = anchorY;
+		this.anchor = anchor;
+	}
+
 	/**
 	 * moves this hitbox
 	 * @param mx the x movement
 	 * @param my the y movement
 	 */
 	public void move(float mx, float my) {
-		this.x += mx;
-		this.y += my;
+		this.setX(this.getX() + mx);
+		this.setY(this.getY() + my);
 	}
 
 	/**
@@ -36,7 +104,7 @@ public class HitBox {
 	 * @return if they collide
 	 */
 	public boolean collides(HitBox box2) {
-		return ((x + width) > box2.x && (box2.x + box2.width) > x && (y + height) > box2.y && (box2.y + box2.height) > y);
+		return ((this.getX() + this.getWidth()) > box2.x && (box2.x + box2.width) > this.getX() && (this.getY() + this.getHeight()) > box2.y && (box2.y + box2.height) > this.getY());
 	}
 
 	/**
@@ -51,9 +119,9 @@ public class HitBox {
 	public HitBoxDirection direction(HitBox box2) {
 		if (collides(box2)) return HitBoxDirection.COLLIDE;
 
-		if ((x + width) <= box2.x) return HitBoxDirection.RIGHT;
-		if ((box2.x + box2.width) <= x) return HitBoxDirection.LEFT;
-		if ((y + height) <= box2.y) return HitBoxDirection.UP;
+		if ((this.getX() + this.getWidth()) <= box2.x) return HitBoxDirection.RIGHT;
+		if ((box2.x + box2.width) <= this.getX()) return HitBoxDirection.LEFT;
+		if ((this.getY() + this.getHeight()) <= box2.y) return HitBoxDirection.UP;
 		return HitBoxDirection.DOWN;
 	}
 
@@ -70,16 +138,16 @@ public class HitBox {
 
 		if (ax != 0) {
 			if (ax < 0) {
-				distance = ((x + width) - box2.x) / (-ax);
+				distance = ((this.getX() + this.getWidth()) - box2.x) / (-ax);
 			} else {
-				distance = ((box2.x + box2.width) - x) / ax;
+				distance = ((box2.x + box2.width) - this.getX()) / ax;
 			}
 		}
 		if (ay != 0) {
 			if (ay < 0) {
-				distance = Math.min(((y + height) - box2.y) / (-ay), distance);
+				distance = Math.min(((this.getY() + this.getHeight()) - box2.y) / (-ay), distance);
 			} else {
-				distance = Math.min(((box2.y + box2.height) - y) / ay, distance);
+				distance = Math.min(((box2.y + box2.height) - this.getY()) / ay, distance);
 			}
 		}
 
@@ -99,14 +167,14 @@ public class HitBox {
 	 * @return the center of the x value of this hitbox
 	 */
 	public float getCenterX() {
-		return x + width / 2;
+		return this.getX() + this.getWidth() / 2;
 	}
 
 	/**
 	 * @return the center of the y value of this hitbox
 	 */
 	public float getCenterY() {
-		return y + height / 2;
+		return this.getY() + this.getHeight() / 2;
 	}
 
 	/**
@@ -114,12 +182,12 @@ public class HitBox {
 	 */
 	@Override
 	public HitBox clone() {
-		return new HitBox(x, y, width, height);
+		return anchor != null ? new HitBox(this.anchor, this.anchorX, this.anchorY, this.getWidth(), this.getHeight(), this.type): new HitBox(this.getX(), this.getY(), this.getWidth(), this.getHeight(), type);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("[(%f, %f), (%f, %f)]", x, y, x + width, y + height);
+		return String.format("[(%f, %f), (%f, %f)]", this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight());
 	}
 
 	public enum HitBoxType {
