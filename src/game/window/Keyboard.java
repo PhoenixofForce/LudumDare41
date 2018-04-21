@@ -17,6 +17,8 @@ public class Keyboard {
 	private int mouseY;
 	private int scrollAmount;
 	private int lastMouseX, lastMouseY, lastMouseX2, lastMouseY2;
+	private int lastClickX, lastClickY;
+	private long lastClick, lastClick2;
 
 	/**
 	 * creates a Keyboard for the given glfw game.window
@@ -49,6 +51,12 @@ public class Keyboard {
 				keys.put(-key-1, 0f);
 			} else if (action == GLFW.GLFW_PRESS) {
 				keys.put(-key-1, 1f);
+
+				lastClickX = mouseX;
+				lastClickY = mouseY;
+
+				lastClick2 = lastClick;
+				lastClick = System.currentTimeMillis();
 			}
 		});
 
@@ -109,6 +117,22 @@ public class Keyboard {
 		return a;
 	}
 
+	public int getLastClickX() {
+		return lastClickX;
+	}
+
+	public int getLastClickY() {
+		return lastClickY;
+	}
+
+	public long getLastClick() {
+		return lastClick;
+	}
+
+	public long getLastClick2() {
+		return lastClick2;
+	}
+
 	/**
 	 * updates the keyboard and checks for pressed keys 
 	 */
@@ -135,7 +159,7 @@ public class Keyboard {
 		}
 
 	}
-	
+
 	//All keys:
 
 	//MOUSE

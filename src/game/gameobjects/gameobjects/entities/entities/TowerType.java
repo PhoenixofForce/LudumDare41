@@ -4,21 +4,19 @@ import game.data.Sprite;
 
 public enum TowerType {
 
-	ARCHER(2, 1, 1, 20, 5, 0, 15, 0, 100, "tower_archer");
+	ARCHER(2, 1, 1, 20, 5, 15, 100, "tower_archer");
 
 	private int range, speed, damage;
-	private int woodCosts, stoneCosts, metalCosts, goldCosts, energyCosts;
+	private int woodCosts, stoneCosts, goldCosts;
 	private Sprite sprite;
-	TowerType(int r, int s, int d, int wc, int sc, int mc, int gc, int ec, int as, String... images) {
+	TowerType(int r, int s, int d, int wc, int sc, int gc, int as, String... images) {
 		this.range = r;
 		this.speed = s;
 		this.damage = d;
 
 		this.woodCosts = wc;
 		this.stoneCosts = sc;
-		this.metalCosts = mc;
 		this.goldCosts = gc;
-		this.energyCosts = ec;
 
 		this.sprite = new Sprite(as, images);
 	}
@@ -35,16 +33,8 @@ public enum TowerType {
 		return speed;
 	}
 
-	public int getEnergyCosts() {
-		return energyCosts;
-	}
-
 	public int getGoldCosts() {
 		return goldCosts;
-	}
-
-	public int getMetalCosts() {
-		return metalCosts;
 	}
 
 	public int getStoneCosts() {
