@@ -4,7 +4,8 @@ import game.data.Sprite;
 
 public enum TowerType {
 
-	ARCHER(2, 1, 1, 20, 5, 15, 100, "tower_archer");
+	ARCHER(2, 1, 1, 20, 5, 15, 100, "tower_archer"),
+	MAGE(1, 2, 3, 5, 20, 30, 100, "tower_mage_0", "tower_mage_1", "tower_mage_2");
 
 	private int range, speed, damage;
 	private int woodCosts, stoneCosts, goldCosts;

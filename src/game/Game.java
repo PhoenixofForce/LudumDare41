@@ -230,7 +230,7 @@ public class Game {
 				return;
 			}
 
-			TowerType t = TowerType.ARCHER;
+			TowerType t = TowerType.MAGE;
 			if(t.getStoneCosts() <= getMaterialAmount(Material.STONE) && t.getWoodCosts() <= getMaterialAmount(Material.WOOD) && t.getGoldCosts() <= getMaterialAmount(Material.GOLD)) {
 				path[clickFieldX][clickFieldY] = true;
 				this.addGameObject(new Tower(t, clickFieldX, clickFieldY));
