@@ -16,6 +16,7 @@ public class Keyboard {
 	private int mouseX;
 	private int mouseY;
 	private int scrollAmount;
+	private int lastMouseX, lastMouseY, lastMouseX2, lastMouseY2;
 
 	/**
 	 * creates a Keyboard for the given glfw game.window
@@ -27,6 +28,11 @@ public class Keyboard {
 		this.mouseX = 0;
 		this.mouseY = 0;
 		this.scrollAmount = 0;
+
+		this.lastMouseX = 0;
+		this.lastMouseY = 0;
+		this.lastMouseX2 = 0;
+		this.lastMouseY2 = 0;
 
 		GLFW.glfwSetKeyCallback(window, (window_, key, scancode, action, mods) -> {
 			if (key == GLFW.GLFW_KEY_UNKNOWN) return;
@@ -78,11 +84,23 @@ public class Keyboard {
 
 
 	public int getMouseX() {
+		lastMouseX2 = lastMouseX;
+		lastMouseX = mouseX;
 		return mouseX;
 	}
 
 	public int getMouseY() {
+		lastMouseY2 = lastMouseY;
+		lastMouseY = mouseY;
 		return mouseY;
+	}
+
+	public int getLastMouseX() {
+		return lastMouseX2;
+	}
+
+	public int getLastMouseY() {
+		return lastMouseY2;
 	}
 
 	public int getScrollAmount() {

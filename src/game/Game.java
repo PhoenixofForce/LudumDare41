@@ -32,6 +32,7 @@ public class Game {
 	private Queue<GameObject> toAdd;				//list of gameObjects, that are added next Tick
 
 	private ParticleSystem particleSystem;			//display and store all particles
+	private CameraController cameraController;
 
 	private Map<Material, Text> ressourceIndicator;
 	private Map<Material, Integer> ressources;
@@ -51,6 +52,23 @@ public class Game {
 
 		generatePath();
 		addMaterials();
+	}
+
+	private void generatePath() {
+		path = new boolean[PATH_WIDTH][PATH_HEIGHT];
+		Random r = new Random();
+		int yDump = PATH_HEIGHT/2;
+
+		for(int x = 0; x < PATH_WIDTH; x++) {
+			path[x][yDump] = true;
+
+			int mode = r.nextInt(3);
+			if(x > 2 && path[x-2][yDump]) {
+				if(mode == 2 && yDump > 0) yDump--;
+				else if(mode == 1 && yDump < PATH_HEIGHT-1) yDump++;
+				path[x][yDump] = true;
+			}
+		}
 		Map<HitBox, String> background = new HashMap<>();
 		for (int x = 0; x < PATH_WIDTH; x++) {
 			for (int y = 0; y < PATH_HEIGHT; y++) {
@@ -73,23 +91,6 @@ public class Game {
 			}
 		}
 		this.addGameObject(new Background(background));
-	}
-
-	private void generatePath() {
-		path = new boolean[PATH_WIDTH][PATH_HEIGHT];
-		Random r = new Random();
-		int yDump = PATH_HEIGHT/2;
-
-		for(int x = 0; x < PATH_WIDTH; x++) {
-			path[x][yDump] = true;
-
-			int mode = r.nextInt(3);
-			if(x > 2 && path[x-2][yDump]) {
-				if(mode == 2 && yDump > 0) yDump--;
-				else if(mode == 1 && yDump < PATH_HEIGHT-1) yDump++;
-				path[x][yDump] = true;
-			}
-		}
 
 		/*for(boolean[] a: path) {
 			System.out.println(Arrays.toString(a));
@@ -126,7 +127,6 @@ public class Game {
 		while (window.isRunning()) {
 			gameTick++;
 			time = TimeUtil.getTime();
-			handleInput();
 
 			//Remove gameObjects
 			while (!toRemove.isEmpty()) {
@@ -135,6 +135,7 @@ public class Game {
 				gameObjects.remove(gameObject);
 				if (gameObject instanceof Drawable) window.removeDrawable((Drawable) gameObject);
 				if (gameObject instanceof ParticleSystem) particleSystem = null;
+				if (gameObject instanceof CameraController) cameraController = null;
 			}
 
 			//Add gameObjects
@@ -146,7 +147,10 @@ public class Game {
 				gameObjects.add(gameObject);
 				if (gameObject instanceof Drawable) window.addDrawable((Drawable) gameObject);
 				if (gameObject instanceof ParticleSystem) particleSystem = (ParticleSystem) gameObject;
+				if (gameObject instanceof CameraController) cameraController = (CameraController) gameObject;
 			}
+
+			handleInput();
 
 			//Sort gameObjects for priority
 			gameObjects.sort((o1, o2) -> Float.compare(o2.getPriority(), o1.getPriority()));
@@ -171,7 +175,12 @@ public class Game {
 		Keyboard keyboard = window.getKeyboard();
 
 		int a = keyboard.getScrollAmount();
-		getCamera().addScreenshake(Math.abs(a) * 0.01f);
+		cameraController.setScroll(a);
+
+		int[] curr = {keyboard.getMouseX(), window.getHeight()-keyboard.getMouseY()};
+		int[] last = {keyboard.getLastMouseX(), window.getHeight()-keyboard.getLastMouseY()};
+
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE))cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
 	}
 
 	/**
@@ -201,6 +210,10 @@ public class Game {
 	 **/
 	public Camera getCamera() {
 		return window.getCamera();
+	}
+
+	public Window getWindow() {
+		return window;
 	}
 
 	/**

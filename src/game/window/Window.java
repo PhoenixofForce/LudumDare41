@@ -132,6 +132,14 @@ public class Window {
 		}
 	}
 
+	public int getHeight() {
+		return height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
 	/**
 	 * Calculates the matrix for the screen
 	 */
