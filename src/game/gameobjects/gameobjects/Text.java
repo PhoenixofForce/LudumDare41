@@ -222,8 +222,8 @@ public class Text extends AbstractGameObject implements Drawable {
 			Rectangle texture = TextureHandler.getSpriteSheetBounds("textures_" + hitBoxList.get(hitBox));
 
 			for (float[] v : Constants.VERTEX_POS) {
-				locations.put(hitBox.getX() + v[0] * hitBox.getWidth());
-				locations.put(hitBox.getY() + v[1] * hitBox.getHeight());
+				locations.put(hitBox.x + v[0] * hitBox.width);
+				locations.put(hitBox.y + v[1] * hitBox.height);
 
 				texLocations.put(texture.x + v[0] * texture.width);
 				texLocations.put(texture.y + (1 - v[1]) * texture.height);
