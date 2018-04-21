@@ -2,6 +2,7 @@ package game;
 
 import game.data.Sprite;
 import game.data.hitbox.HitBox;
+import game.gameobjects.GameMaterial;
 import game.gameobjects.GameObject;
 import game.gameobjects.Material;
 import game.gameobjects.gameobjects.Text;
@@ -39,9 +40,8 @@ public class Game {
 	private CameraController cameraController;
 
 	private int mouseFieldX, mouseFieldY;
+	private Map<Material, GameMaterial> materials;
 
-	private Map<Material, Text> ressourceIndicator;
-	private Map<Material, Integer> ressources;
 	private boolean[][] path;
 
 	public Game(Window window) {
@@ -58,6 +58,7 @@ public class Game {
 
 		mouseFieldX = 0;
 		mouseFieldY = 0;
+
 		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), -2) {
 			{
 				setSprite(new Sprite(100, "selection"));
@@ -75,7 +76,13 @@ public class Game {
 		});
 
 		generatePath();
-		addMaterials();
+
+		materials = new HashMap<>();
+		for (int i = 0; i < Material.values().length; i++) {
+			GameMaterial m = new GameMaterial(i);
+			this.addGameObject(m);
+			materials.put(Material.values()[i], m);
+		}
 	}
 
 	private void generatePath() {
@@ -119,40 +126,6 @@ public class Game {
 		/*for(boolean[] a: path) {
 			System.out.println(Arrays.toString(a));
 		}*/
-	}
-
-	private void addMaterials() {
-		ressources = new HashMap<>();
-		ressourceIndicator = new HashMap<>();
-		int i = 0;
-		for(Material m: Material.values()) {
-			ressources.put(m, 100);
-			Text t = new Text(-0.99f, 0.95f - i*0.0625f, -100, "<"+m.toString().toLowerCase() +"> 0", 0.04f, false, 0f, 0f, Color.WHITE);
-			this.addGameObject(t);
-			ressourceIndicator.put(m, t);
-			i++;
-		}
-
-		updateMaterials();
-	}
-
-	private void updateMaterials() {
-		for(Material m: Material.values()) {
-			ressourceIndicator.get(m).setText("<" + m.toString().toLowerCase() +">" + " " + ressources.get(m));
-		}
-	}
-
-	public void addMaterial(Material m, int amount) {
-		ressources.put(m, ressources.get(m)+amount);
-		updateMaterials();
-	}
-
-	public void removeMaterial(Material m, int amount) {
-		addMaterial(m, -amount);
-	}
-
-	public int getMaterialAmount(Material m) {
-		return ressources.get(m);
 	}
 
 	/**
@@ -231,12 +204,12 @@ public class Game {
 			}
 
 			TowerType t = TowerType.VOLT;
-			if(t.getStoneCosts() <= getMaterialAmount(Material.STONE) && t.getWoodCosts() <= getMaterialAmount(Material.WOOD) && t.getGoldCosts() <= getMaterialAmount(Material.GOLD)) {
+			if(t.getStoneCosts() <= materials.get(Material.STONE).getAmount() && t.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && t.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
 				path[clickFieldX][clickFieldY] = true;
 				this.addGameObject(new Tower(t, clickFieldX, clickFieldY));
-				this.removeMaterial(Material.GOLD, t.getGoldCosts());
-				this.removeMaterial(Material.WOOD, t.getWoodCosts());
-				this.removeMaterial(Material.STONE, t.getStoneCosts());
+				materials.get(Material.GOLD).remove(t.getGoldCosts());
+				materials.get(Material.WOOD).remove(t.getWoodCosts());
+				materials.get(Material.STONE).remove(t.getStoneCosts());
 			} else getCamera().addScreenshake(0.1f);
 		}
 

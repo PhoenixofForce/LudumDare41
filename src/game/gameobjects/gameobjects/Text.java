@@ -376,5 +376,9 @@ public class Text extends AbstractGameObject implements Drawable {
 
 		return printText.replaceAll("_", " ").toCharArray();
 	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
 }
 
