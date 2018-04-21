@@ -48,7 +48,22 @@ public class Game {
 		Map<HitBox, String> background = new HashMap<>();
 		for (int x = 0; x < PATH_WIDTH; x++) {
 			for (int y = 0; y < PATH_HEIGHT; y++) {
-				background.put(new HitBox(x, y, 1, 1), path[x][y] ? "path_br" : "grass");
+
+				String tile = "grass";
+				if(path[x][y]) {
+					if(x > 0 && path[x-1][y] && y > 0 && path[x][y-1]) tile = "path_tr";
+					else if(x > 0 && path[x-1][y] && y < PATH_HEIGHT-1 && path[x][y+1]) tile = "path_br";
+					else if(x < PATH_WIDTH-1 && path[x+1][y] && y > 0 && path[x][y-1]) tile = "path_tl";
+					else if(x < PATH_WIDTH-1 && path[x+1][y] && y < PATH_HEIGHT-1 && path[x][y+1]) tile = "path_bl";
+					else tile = "path_t";
+
+					if(x == PATH_WIDTH-1) {
+						if(y > 0 && path[x][y-1] && !path[x-1][y]) tile = "path_tl";
+						else if(y < PATH_HEIGHT-1 && path[x][y+1] && !path[x-1][y]) tile = "path_bl";
+					}
+				}
+
+				background.put(new HitBox(x, y, 1, 1), tile);
 			}
 		}
 		this.addGameObject(new Background(background));
