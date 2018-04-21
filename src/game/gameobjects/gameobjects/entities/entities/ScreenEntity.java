@@ -28,9 +28,9 @@ public class ScreenEntity extends BasicDrawingEntity {
 	@Override
 	public void draw(Window window, long time) {
 		hitBox = hitBox2.clone();
-		hitBox.setWidth(hitBox.getWidth() / window.getAspectRatio());
-		hitBox.setX(hitBox.getX() - anchorX * hitBox.getWidth());
-		hitBox.setY(hitBox.getY() - anchorY * hitBox.getHeight());
+		hitBox.width /= window.getAspectRatio();
+		hitBox.x -= anchorX * hitBox.width;
+		hitBox.y -= anchorY * hitBox.height;
 
 		super.draw(window, time);
 	}
@@ -46,10 +46,10 @@ public class ScreenEntity extends BasicDrawingEntity {
 	}
 
 	public float getWidth() {
-		return hitBox.getWidth();
+		return hitBox.width;
 	}
 
 	public float getHeight() {
-		return hitBox.getHeight();
+		return hitBox.height;
 	}
 }

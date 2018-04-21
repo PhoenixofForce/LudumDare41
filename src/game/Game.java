@@ -74,7 +74,8 @@ public class Game {
 			}
 		}
 		this.addGameObject(new Background(background));
-		this.addGameObject(new ScreenEntity(new HitBox(-1, 1, 0.1f, 0.1f), -5, new Sprite(100, "path_tl"), 0, 1));
+		HitBox h1 = new HitBox(-1, 1, 0.1f, 0.1f);
+		this.addGameObject(new ScreenEntity(h1, -5, new Sprite(100, "path_tl"), 0, 1));
 	}
 
 	private void generatePath() {
