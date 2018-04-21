@@ -29,7 +29,6 @@ import java.util.Optional;
  * draws text on the screen
  */
 public class Text extends AbstractGameObject implements Drawable {
-	private Sprite coin = new Sprite(100, "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin_idle1_0", "coin_idle1_1", "coin_idle1_2", "coin_idle1_3", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin_idle2_0", "coin_idle2_1", "coin_idle2_0");
 	private Sprite stick_up = new Sprite(300, "stick_up_0", "stick_up_1", "stick_up_2", "stick_up_3", "stick_up_2", "stick_up_1");
 	private Sprite stick_down = new Sprite(300, "stick_down_0", "stick_down_1", "stick_down_2", "stick_down_3", "stick_down_2", "stick_down_1");
 	private Sprite stick_left = new Sprite(300, "stick_left_0", "stick_left_1", "stick_left_2", "stick_left_3", "stick_left_2", "stick_left_1");
@@ -42,6 +41,7 @@ public class Text extends AbstractGameObject implements Drawable {
 	private Sprite buttonX = new Sprite(100, "button_x");
 	private Sprite buttonY = new Sprite(100, "button_y");
 	private Sprite key = new Sprite(100, "key");
+	private Sprite wood = new Sprite(100, "material_wood");
 
 	private float x, y, size, drawingPriority;
 	private boolean useCamera;
@@ -330,8 +330,8 @@ public class Text extends AbstractGameObject implements Drawable {
 				case "button_y":
 					animations.put(index, buttonY);
 					break;
-				case "coin":
-					animations.put(index, coin);
+				case "wood":
+					animations.put(index, wood);
 					break;
 				case "key_up":
 					animations.put(index, key);

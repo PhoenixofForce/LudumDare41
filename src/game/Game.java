@@ -3,6 +3,8 @@ package game;
 import game.data.Sprite;
 import game.data.hitbox.HitBox;
 import game.gameobjects.GameObject;
+import game.gameobjects.Material;
+import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.entities.ScreenEntity;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
@@ -13,12 +15,14 @@ import game.window.Drawable;
 import game.window.Keyboard;
 import game.window.Window;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Game {
-	public static final int PATH_WIDTH = 16;
-	public static final int PATH_HEIGHT = 9;
+	public static final int PATH_WIDTH = 32;
+	public static final int PATH_HEIGHT = 18;
 
 	private Window window;							//displays the game
 
@@ -31,13 +35,13 @@ public class Game {
 
 	private ParticleSystem particleSystem;			//display and store all particles
 
+	private Map<Material, Integer> ressources;
 	private boolean[][] path;
 
 	public Game(Window window) {
 		this.window = window;
 		Options.applyOptions(this);
 
-		generatePath();
 		gameTick = 0;
 
 		gameObjects = new LinkedList<>();
@@ -47,6 +51,7 @@ public class Game {
 		this.addGameObject(new CameraController());
 
 		generatePath();
+		addMaterials();
 		Map<HitBox, String> background = new HashMap<>();
 		for (int x = 0; x < PATH_WIDTH; x++) {
 			for (int y = 0; y < PATH_HEIGHT; y++) {
@@ -57,7 +62,7 @@ public class Game {
 					else if(x > 0 && path[x-1][y] && y < PATH_HEIGHT-1 && path[x][y+1]) tile = "path_br";
 					else if(x < PATH_WIDTH-1 && path[x+1][y] && y > 0 && path[x][y-1]) tile = "path_tl";
 					else if(x < PATH_WIDTH-1 && path[x+1][y] && y < PATH_HEIGHT-1 && path[x][y+1]) tile = "path_bl";
-					else tile = "path_t";
+					else tile = Math.random() <= 0.5f? "path_t": "path_b";
 
 					if(x == PATH_WIDTH-1) {
 						if(y > 0 && path[x][y-1] && !path[x-1][y]) tile = "path_tl";
@@ -73,10 +78,9 @@ public class Game {
 	}
 
 	private void generatePath() {
-
 		path = new boolean[PATH_WIDTH][PATH_HEIGHT];
 		Random r = new Random();
-		int yDump = r.nextInt(PATH_HEIGHT);
+		int yDump = PATH_HEIGHT/2;
 
 		for(int x = 0; x < PATH_WIDTH; x++) {
 			path[x][yDump] = true;
@@ -92,6 +96,15 @@ public class Game {
 		/*for(boolean[] a: path) {
 			System.out.println(Arrays.toString(a));
 		}*/
+	}
+
+	private void addMaterials() {
+		ressources = new HashMap<>();
+		for(Material m: Material.values()) {
+			ressources.put(m, 100);
+		}
+
+		this.addGameObject(new Text(-1, -1, -100, "<wood> 100", 8f, null, 0f, 1f,  Color.WHITE));
 	}
 
 	/**
