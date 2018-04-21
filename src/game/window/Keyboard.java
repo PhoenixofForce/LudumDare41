@@ -30,6 +30,13 @@ public class Keyboard {
 				keys.put(30*16 + key, 1f);
 			}
 		});
+		GLFW.glfwSetMouseButtonCallback(window, (window_,key, action, mods) -> {
+			if (action == GLFW.GLFW_RELEASE) {
+				keys.put(-key-1, 0f);
+			} else if (action == GLFW.GLFW_PRESS) {
+				keys.put(-key-1, 1f);
+			}
+		});
 	}
 
 	/**
@@ -78,7 +85,22 @@ public class Keyboard {
 	}
 	
 	//All keys:
-	
+
+	//MOUSE
+	public static final int
+			MOUSE_BUTTON_1      = -1,
+			MOUSE_BUTTON_2      = -2,
+			MOUSE_BUTTON_3      = -3,
+			MOUSE_BUTTON_4      = -4,
+			MOUSE_BUTTON_5      = -5,
+			MOUSE_BUTTON_6      = -6,
+			MOUSE_BUTTON_7      = -7,
+			MOUSE_BUTTON_8      = -8,
+			MOUSE_BUTTON_LAST   = MOUSE_BUTTON_8,
+			MOUSE_BUTTON_LEFT   = MOUSE_BUTTON_1,
+			MOUSE_BUTTON_RIGHT  = MOUSE_BUTTON_2,
+			MOUSE_BUTTON_MIDDLE = MOUSE_BUTTON_3;
+
 	//GamePad 1
 	public static final int
 			GAMEPAD_1_BUTTON_A = 30 * 0 + GLFW.GLFW_GAMEPAD_BUTTON_A,

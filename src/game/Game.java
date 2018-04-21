@@ -144,9 +144,7 @@ public class Game {
 	private void handleInput() {
 		Keyboard keyboard = window.getKeyboard();
 
-		if (keyboard.isPressed(Keyboard.KEY_R)) getCamera().addScreenshake(0.01f);
-
-		//TODO: Mouse support?
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1)) getCamera().addScreenshake(0.01f);
 	}
 
 	/**
