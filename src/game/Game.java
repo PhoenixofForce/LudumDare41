@@ -1,12 +1,12 @@
 package game;
 
+import game.data.Sprite;
 import game.data.hitbox.HitBox;
 import game.gameobjects.GameObject;
 import game.gameobjects.Material;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
-import game.gameobjects.gameobjects.entities.entities.Tower;
-import game.gameobjects.gameobjects.entities.entities.TowerType;
+import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
 import game.gameobjects.gameobjects.wall.Background;
 import game.util.TimeUtil;
@@ -36,6 +36,8 @@ public class Game {
 	private ParticleSystem particleSystem;			//display and store all particles
 	private CameraController cameraController;
 
+	private int mouseFieldX, mouseFieldY;
+
 	private Map<Material, Text> ressourceIndicator;
 	private Map<Material, Integer> ressources;
 	private boolean[][] path;
@@ -51,6 +53,24 @@ public class Game {
 		toAdd = new ConcurrentLinkedQueue<>();
 
 		this.addGameObject(new CameraController());
+
+		mouseFieldX = 0;
+		mouseFieldY = 0;
+		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), -2) {
+			{
+				setSprite(new Sprite(100, "selection"));
+			}
+			@Override
+			public float getPriority() {
+				return 100;
+			}
+
+			@Override
+			public void update(Game game) {
+				hitBox.x = mouseFieldX;
+				hitBox.y = mouseFieldY;
+			}
+		});
 
 		generatePath();
 		addMaterials();
@@ -183,6 +203,9 @@ public class Game {
 		int[] last = {keyboard.getLastMouseX(), window.getHeight()-keyboard.getLastMouseY()};
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE))cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
+
+		mouseFieldX = (int) (getCamera().getX() + 2*(curr[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
+		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 	}
 
 	/**
