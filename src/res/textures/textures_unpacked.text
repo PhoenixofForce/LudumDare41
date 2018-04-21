@@ -1,4 +1,4 @@
-106
+115
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -12,14 +12,23 @@ tower_archer 80 32 16 32
 tower_mage_0 80 64 16 32
 tower_mage_1 96 64 16 32
 tower_mage_2 112 64 16 32
+tower_volto_0 128 32 16 32
+tower_volto_1 144 32 16 32
+tower_volto_2 160 32 16 32
+tower_volto_3 176 32 16 32
+tower_volto_4 192 32 16 32
+tower_volto_5 208 32 16 32
+tower_volto_6 128 64 16 32
+tower_volto_7 144 64 16 32
+tower_volto_8 160 64 16 32
+tower_volto_9 176 64 16 32
+tower_volto_10 192 64 16 32
 enemy_slime_r 66 35 12 11
 enemy_slime_g 66 19 12 11
 enemy_slime_b 66 3 12 11
 material_gold 0 48 32 16
 material_wood 0 64 32 16
 material_stone 0 80 32 16
-material_metal 0 96 32 16
-material_energy 0 112 32 16
 lifebar_full 80 14 1 2
 lifebar_empty 81 14 1 2
 a 100 144 5 7
