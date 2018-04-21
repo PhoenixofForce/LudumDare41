@@ -8,9 +8,7 @@ import game.window.Drawable;
 import game.window.Keyboard;
 import game.window.Window;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Game {
@@ -25,15 +23,40 @@ public class Game {
 
 	private ParticleSystem particleSystem;			//display and store all particles
 
+	private boolean[][] path;
+
 	public Game(Window window) {
 		this.window = window;
 		Options.applyOptions(this);
 
+		generatePath();
 		gameTick = 0;
 
 		gameObjects = new LinkedList<>();
 		toRemove = new ConcurrentLinkedQueue<>();
 		toAdd = new ConcurrentLinkedQueue<>();
+	}
+
+	private void generatePath() {
+
+		path = new boolean[16][9];
+		Random r = new Random();
+		int yDump = r.nextInt(9);
+
+		for(int x = 0; x < 16; x++) {
+			path[x][yDump] = true;
+
+			int mode = r.nextInt(3);
+			if(x > 2 && path[x-2][yDump]) {
+				if(mode == 2 && yDump > 0) yDump--;
+				else if(mode == 1 && yDump < 8) yDump++;
+				path[x][yDump] = true;
+			}
+		}
+
+		/*for(boolean[] a: path) {
+			System.out.println(Arrays.toString(a));
+		}*/
 	}
 
 	/**
