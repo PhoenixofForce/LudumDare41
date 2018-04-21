@@ -5,6 +5,8 @@ import game.gameobjects.GameObject;
 import game.gameobjects.Material;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
+import game.gameobjects.gameobjects.entities.entities.Tower;
+import game.gameobjects.gameobjects.entities.entities.TowerType;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
 import game.gameobjects.gameobjects.wall.Background;
 import game.util.TimeUtil;
@@ -112,7 +114,7 @@ public class Game {
 		updateMaterials();
 	}
 
-	public void updateMaterials() {
+	private void updateMaterials() {
 		for(Material m: Material.values()) {
 			ressourceIndicator.get(m).setText("<" + m.toString().toLowerCase() +">" + " " + ressources.get(m));
 		}
