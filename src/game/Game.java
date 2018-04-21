@@ -1,12 +1,10 @@
 package game;
 
-import game.data.Sprite;
 import game.data.hitbox.HitBox;
 import game.gameobjects.GameObject;
 import game.gameobjects.Material;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
-import game.gameobjects.gameobjects.entities.entities.ScreenEntity;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
 import game.gameobjects.gameobjects.wall.Background;
 import game.util.TimeUtil;
@@ -35,6 +33,7 @@ public class Game {
 
 	private ParticleSystem particleSystem;			//display and store all particles
 
+	private Map<Material, Text> ressourceIndicator;
 	private Map<Material, Integer> ressources;
 	private boolean[][] path;
 
@@ -74,8 +73,6 @@ public class Game {
 			}
 		}
 		this.addGameObject(new Background(background));
-		HitBox h1 = new HitBox(-1, 1, 0.1f, 0.1f);
-		this.addGameObject(new ScreenEntity(h1, -5, new Sprite(100, "path_tl"), 0, 1));
 	}
 
 	private void generatePath() {
@@ -101,11 +98,23 @@ public class Game {
 
 	private void addMaterials() {
 		ressources = new HashMap<>();
+		ressourceIndicator = new HashMap<>();
+		int i = 0;
 		for(Material m: Material.values()) {
 			ressources.put(m, 100);
+			Text t = new Text(-0.95f, 0.88f - i*0.125f, -100, "<"+m.toString().toLowerCase() +"> 0", 0.08f, false, 0f, 0f, Color.WHITE);
+			this.addGameObject(t);
+			ressourceIndicator.put(m, t);
+			i++;
 		}
 
-		this.addGameObject(new Text(-1, -1, -100, "<wood> 100", 8f, null, 0f, 1f,  Color.WHITE));
+		updateMaterials();
+	}
+
+	public void updateMaterials() {
+		for(Material m: Material.values()) {
+			ressourceIndicator.get(m).setText("<" + m.toString().toLowerCase() +">" + " " + ressources.get(m));
+		}
 	}
 
 	/**

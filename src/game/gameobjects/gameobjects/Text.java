@@ -42,6 +42,10 @@ public class Text extends AbstractGameObject implements Drawable {
 	private Sprite buttonY = new Sprite(100, "button_y");
 	private Sprite key = new Sprite(100, "key");
 	private Sprite wood = new Sprite(100, "material_wood");
+	private Sprite stone = new Sprite(100, "material_stone");
+	private Sprite metal = new Sprite(100, "material_metal");
+	private Sprite gold = new Sprite(100, "material_gold");
+	private Sprite energy = new Sprite(100, "material_energy");
 
 	private float x, y, size, drawingPriority;
 	private boolean useCamera;
@@ -332,6 +336,18 @@ public class Text extends AbstractGameObject implements Drawable {
 					break;
 				case "wood":
 					animations.put(index, wood);
+					break;
+				case "stone":
+					animations.put(index, stone);
+					break;
+				case "metal":
+					animations.put(index, metal);
+					break;
+				case "gold":
+					animations.put(index, gold);
+					break;
+				case "energy":
+					animations.put(index, energy);
 					break;
 				case "key_up":
 					animations.put(index, key);

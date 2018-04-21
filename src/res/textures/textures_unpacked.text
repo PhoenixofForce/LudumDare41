@@ -1,4 +1,4 @@
-85
+91
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -10,9 +10,15 @@ path_b 16 32 16 16
 path_br 32 32 16 16
 tower_archer 64 14 15 18
 enemy_slime 82 20 12 11
-material_wood 60 35 20 10
-buidling_windmill 73 48 30 32
-building_barn 97 30 14 18
+material_gold 0 48 32 16
+material_wood 0 64 32 16
+material_stone 0 80 32 16
+material_metal 0 96 32 16
+material_energy 0 112 32 16
+buidling_windmill 96 48 30 32
+building_barn 97 17 14 15
+building_house 96 32 14 16
+building_lumber 96 32 21 16
 lifebar_full 80 14 1 2
 lifebar_empty 81 14 1 2
 a 100 144 5 7

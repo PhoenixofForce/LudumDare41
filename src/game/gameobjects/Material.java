@@ -2,7 +2,7 @@ package game.gameobjects;
 
 public enum Material {
 
-	WOOD("material_wood"), STONE("material_wood"), ENERGY("material_wood"), METAL("material_wood"), GOLD("material_wood");
+	GOLD("material_gold"), WOOD("material_wood"), STONE("material_stone"), METAL("material_metal"), ENERGY("material_energy");
 
 	private String sheetName;
 	Material(String sName) {
