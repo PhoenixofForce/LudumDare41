@@ -8,10 +8,10 @@ path_r 32 16 16 16
 path_bl 0 32 16 16
 path_b 16 32 16 16
 path_br 32 32 16 16
-tower_archer 81 46 15 18
-tower_mage_0 80 70 14 26
-tower_mage_1 96 70 14 26
-tower_mage_2 112 70 14 26
+tower_archer 81 32 16 32
+tower_mage_0 79 64 16 32
+tower_mage_1 95 64 16 32
+tower_mage_2 111 64 16 32
 enemy_slime_r 66 35 12 11
 enemy_slime_g 66 19 12 11
 enemy_slime_b 66 3 12 11
