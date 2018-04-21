@@ -8,7 +8,7 @@ public class Tower extends BasicStaticEntity {
 
 	private TowerType type;
 	public Tower(TowerType t, float x, float y) {
-		super(new HitBox(x, y, 1, 2), 1);
+		super(new HitBox(x, y, 1, 2), -Game.PATH_HEIGHT+y);
 		this.type = t;
 		setSprite(type.getSprite());
 	}

@@ -226,7 +226,7 @@ public class Game {
 
 			lastPressedTick = gameTick;
 			if(path[clickFieldX][clickFieldY]) {
-				getCamera().addScreenshake(0.1f);
+				//getCamera().addScreenshake(0.1f);  //Causes trouble when clicken, because of multiple calls
 				return;
 			}
 
