@@ -69,6 +69,15 @@ public class Enemy extends BasicMovingEntity{
 	}
 
 	@Override
+	public boolean equals(Object b){
+		if(b instanceof Enemy) {
+			Enemy e = (Enemy) b;
+			return e.type == type && e.position == position && e.health == health;
+		}
+		return false;
+	}
+
+	@Override
 	public float getPriority() {
 		return 0;
 	}

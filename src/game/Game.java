@@ -40,7 +40,7 @@ public class Game {
 	private int mouseFieldX, mouseFieldY;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
-	private TowerType selectedTower = TowerType.ARCHER;
+	private TowerType selectedTower = TowerType.BOMB;
 	private Path path;
 
 	public Game(Window window) {

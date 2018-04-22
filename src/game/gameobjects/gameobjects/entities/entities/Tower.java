@@ -3,6 +3,8 @@ package game.gameobjects.gameobjects.entities.entities;
 import game.Game;
 import game.data.hitbox.HitBox;
 import game.gameobjects.gameobjects.entities.BasicStaticEntity;
+import game.gameobjects.gameobjects.particle.ParticleType;
+import game.util.MathUtil;
 import game.util.TimeUtil;
 
 import java.util.ArrayList;
@@ -52,6 +54,29 @@ public class Tower extends BasicStaticEntity {
 			for(int i = 0; i < damageTimer.size(); i++) {
 				damageTimer.set(i, damageTimer.get(i)-1);
 				if(damageTimer.get(i) == 0) {
+
+					//SCREENSHAKE
+					if(type.getParticleType() == ParticleType.BOMB) {
+						game.getCamera().addScreenshake(0.01f);
+					}
+
+					//EXPLOSION
+					if(type.getParticleType() == ParticleType.BOMB) {
+						game.getParticleSystem().createParticle(ParticleType.EXPLOSION, e.getHitBox().getCenterX(), e.getHitBox().getCenterY(), 0, 0);
+					}
+
+					//AOE
+					if(type.getParticleType() == ParticleType.BOMB) {
+						for(int j = 0; j < game.getEnemies().size(); j++) {
+							Enemy e2 = game.getEnemies().get(j);
+							if(e2.equals(2)) continue;
+							double distance = Math.sqrt(Math.pow(e2.getHitBox().x - e.getHitBox().x, 2) + Math.pow(e2.getHitBox().x - e.getHitBox().y, 2));
+							if(distance < 16.0f) {
+								e2.damage(1 + Math.round((float)((type.getDamage()-1)/(distance/2))));
+							}
+						}
+					}
+
 					e.damage(type.getDamage());
 					damageTimer.remove(i);
 				}
@@ -74,7 +99,11 @@ public class Tower extends BasicStaticEntity {
 				damageQueue.get(focus).add(damageIn);
 
 				float[] pos = focus.getPositionIn(damageIn);
-				game.getParticleSystem().createParticle(type.getParticleType(), getHitBox().getCenterX(), getHitBox().getCenterY(), (pos[0] +0.5f - getHitBox().getCenterX())/((float)damageIn), (pos[1] +0.5f - getHitBox().getCenterY())/((float)damageIn));
+				if(type.getParticleType() != ParticleType.THUNDER) game.getParticleSystem().createParticle(type.getParticleType(), getHitBox().getCenterX(), getHitBox().getCenterY(), (pos[0] +0.5f - getHitBox().getCenterX())/((float)damageIn), (pos[1] +0.5f - getHitBox().getCenterY())/((float)damageIn));
+				else {
+					pos = focus.getPositionIn(42);
+					game.getParticleSystem().createParticle(ParticleType.THUNDER, pos[0], pos[1]+0.9f, 0, 0);
+				}
 
 				lastAttack = TimeUtil.getTime();
 			}

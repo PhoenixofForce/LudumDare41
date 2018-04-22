@@ -123,7 +123,7 @@ particle_slime_g_big 80 166 2 2
 particle_slime_g 80 169 1 1
 particle_slime_b_big 77 166 2 2
 particle_slime_b 66 169 1 1
-particle_bomb 64 174 8 12
+particle_bomb 62 174 12 12
 particle_explosion_0 208 184 24 24
 particle_explosion_1 232 184 24 24
 particle_explosion_2 184 208 24 24
