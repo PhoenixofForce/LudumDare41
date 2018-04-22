@@ -43,9 +43,7 @@ public class Text extends AbstractGameObject implements Drawable {
 	private Sprite key = new Sprite(100, "key");
 	private Sprite wood = new Sprite(100, "material_wood");
 	private Sprite stone = new Sprite(100, "material_stone");
-	private Sprite metal = new Sprite(100, "material_metal");
 	private Sprite gold = new Sprite(100, "material_gold");
-	private Sprite energy = new Sprite(100, "material_energy");
 
 	private float x, y, size, drawingPriority;
 	private boolean useCamera;

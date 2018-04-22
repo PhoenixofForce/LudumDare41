@@ -41,6 +41,7 @@ public class Game {
 
 	private int mouseFieldX, mouseFieldY;
 	private Map<Material, GameMaterial> materials;
+	private TowerType selectedTower = TowerType.MAGE;
 
 	private boolean[][] path;
 
@@ -193,15 +194,17 @@ public class Game {
 			int clickFieldX = (int) (getCamera().getX() + 2*(currC[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
 			int clickFieldY = (int) (getCamera().getY() + 2*(currC[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 
-			TowerType t = TowerType.VOLT;
-			if(clickFieldX < PATH_WIDTH && clickFieldX >= 0 && clickFieldY >= 0 && clickFieldY < PATH_HEIGHT && !path[clickFieldX][clickFieldY] && t.getStoneCosts() <= materials.get(Material.STONE).getAmount() && t.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && t.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
+			if(selectedTower == null) {
+
+			}
+			else if(clickFieldX < PATH_WIDTH && clickFieldX >= 0 && clickFieldY >= 0 && clickFieldY < PATH_HEIGHT && !path[clickFieldX][clickFieldY] && selectedTower.getStoneCosts() <= materials.get(Material.STONE).getAmount() && selectedTower.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && selectedTower.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
 				path[clickFieldX][clickFieldY] = true;
-				this.addGameObject(new Tower(t, clickFieldX, clickFieldY));
-				materials.get(Material.GOLD).remove(t.getGoldCosts());
-				materials.get(Material.WOOD).remove(t.getWoodCosts());
-				materials.get(Material.STONE).remove(t.getStoneCosts());
+				this.addGameObject(new Tower(selectedTower, clickFieldX, clickFieldY));
+				materials.get(Material.GOLD).remove(selectedTower.getGoldCosts());
+				materials.get(Material.WOOD).remove(selectedTower.getWoodCosts());
+				materials.get(Material.STONE).remove(selectedTower.getStoneCosts());
 			} else {
-				createErrorText("You can not place this here");
+				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
 			}
 		}
