@@ -1,4 +1,4 @@
-151
+165
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -8,6 +8,20 @@ path_r 32 16 16 16
 path_bl 0 32 16 16
 path_b 16 32 16 16
 path_br 32 32 16 16
+river_tl 352 176 16 16
+river_t 368 176 16 16
+river_tr 384 176 16 16
+river_l 352 192 16 16
+river_r 384 192 16 16
+river_bl 352 208 16 16
+river_b 368 208 16 16
+river_br 384 208 16 16
+fence_tail 320 208 16 16
+fence_head 336 208 16 16
+grass_flower_single 328 183 8 8
+grass_flower_double 336 183 8 8
+grass_grass_2 336 192 8 8
+grass_grass_3 328 192 8 8
 tower_archer 80 32 16 32
 tower_mage_0 80 64 16 32
 tower_mage_1 96 64 16 32
