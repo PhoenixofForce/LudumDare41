@@ -11,6 +11,8 @@ public class GameMaterial extends AbstractGameObject {
 	private Text displayText;
 	private Material material;
 
+	private Game game;
+	private int lastTick = 0;
 	public GameMaterial(int i) {
 		this.amount = 100;
 		this.displayAmount = 100;
@@ -22,6 +24,7 @@ public class GameMaterial extends AbstractGameObject {
 	public void init(Game game) {
 		super.init(game);
 		game.addGameObject(displayText);
+		this.game = game;
 	}
 
 	@Override
@@ -31,6 +34,7 @@ public class GameMaterial extends AbstractGameObject {
 
 	@Override
 	public void update(Game game) {
+		if(game.getGameTick()-60 >= lastTick) displayAmount = amount;
 		if (displayAmount > amount) {
 			if (game.getGameTick()%4 ==0) displayAmount--;
 			displayText.setColor(Color.RED);
@@ -50,6 +54,7 @@ public class GameMaterial extends AbstractGameObject {
 
 	public void remove(int amount) {
 		this.amount -= amount;
+		lastTick = game.getGameTick();
 	}
 
 	public void add(int amount) {

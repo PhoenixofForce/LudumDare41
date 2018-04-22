@@ -196,7 +196,7 @@ public class Game {
 			int clickFieldY = (int) (getCamera().getY() + 2*(currC[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 
 			TowerType t = TowerType.VOLT;
-			if(!path[clickFieldX][clickFieldY] && t.getStoneCosts() <= materials.get(Material.STONE).getAmount() && t.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && t.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
+			if(clickFieldX < PATH_WIDTH && clickFieldX >= 0 && clickFieldY >= 0 && clickFieldY < PATH_HEIGHT && !path[clickFieldX][clickFieldY] && t.getStoneCosts() <= materials.get(Material.STONE).getAmount() && t.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && t.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
 				path[clickFieldX][clickFieldY] = true;
 				this.addGameObject(new Tower(t, clickFieldX, clickFieldY));
 				materials.get(Material.GOLD).remove(t.getGoldCosts());

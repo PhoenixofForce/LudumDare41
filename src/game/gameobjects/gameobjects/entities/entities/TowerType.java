@@ -6,7 +6,8 @@ public enum TowerType {
 
 	ARCHER(2, 1, 1, 20, 5, 15, 100, "tower_archer"),
 	MAGE(1, 2, 3, 5, 20, 30, 100, "tower_mage_0", "tower_mage_1", "tower_mage_2"),
-	VOLT(0, 0, 0, 5, 10, -5, 100, "tower_volto_0", "tower_volto_1", "tower_volto_2", "tower_volto_2", "tower_volto_3", "tower_volto_3", "tower_volto_4", "tower_volto_5", "tower_volto_6", "tower_volto_7", "tower_volto_8", "tower_volto_9", "tower_volto_10");
+	VOLT(0, 0, 0, 5, -10, -5, 100, "tower_volto_0", "tower_volto_1", "tower_volto_2", "tower_volto_2", "tower_volto_3", "tower_volto_3", "tower_volto_4", "tower_volto_5", "tower_volto_6", "tower_volto_7", "tower_volto_8", "tower_volto_9", "tower_volto_10");
+	//TODO:
 
 	private int range, speed, damage;
 	private int woodCosts, stoneCosts, goldCosts;

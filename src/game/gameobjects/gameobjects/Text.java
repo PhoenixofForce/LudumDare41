@@ -340,14 +340,8 @@ public class Text extends AbstractGameObject implements Drawable {
 				case "stone":
 					animations.put(index, stone);
 					break;
-				case "metal":
-					animations.put(index, metal);
-					break;
 				case "gold":
 					animations.put(index, gold);
-					break;
-				case "energy":
-					animations.put(index, energy);
 					break;
 				case "key_up":
 					animations.put(index, key);
