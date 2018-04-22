@@ -58,6 +58,33 @@ public class Game {
 		mouseFieldX = 0;
 		mouseFieldY = 0;
 
+		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), -100) {
+			{
+				setSprite(new Sprite(100, "range_circle"));
+			}
+
+			private Tower mouseOverTower;
+
+			@Override
+			public float getPriority() {
+				return 100;
+			}
+
+			@Override
+			public void update(Game game) {
+				mouseOverTower = path.getTower(mouseFieldX, mouseFieldY);
+				if (mouseOverTower == null) {
+					hitBox.width = 0;
+					hitBox.height = 0;
+				} else {
+					hitBox.width = mouseOverTower.getType().getRange()*2;
+					hitBox.height = mouseOverTower.getType().getRange()*2;
+					hitBox.x = mouseOverTower.getHitBox().getCenterX() - mouseOverTower.getType().getRange();
+					hitBox.y = mouseOverTower.getHitBox().getCenterY() - mouseOverTower.getType().getRange() - 0.5f;
+				}
+			}
+		});
+
 		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), -2) {
 			{
 				setSprite(new Sprite(100, "selection"));
@@ -150,8 +177,10 @@ public class Game {
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
 		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick)) {
 			if(selectedTower != null && mouseFieldX < path.getWidth() && mouseFieldX >= 0 && mouseFieldY >= 0 && mouseFieldY < path.getHeight() && !path.isBlocked(mouseFieldX, mouseFieldY) && selectedTower.getStoneCosts() <= materials.get(Material.STONE).getAmount() && selectedTower.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && selectedTower.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
-				path.setBlocked(mouseFieldX, mouseFieldY, true);
-				this.addGameObject(new Tower(selectedTower, mouseFieldX, mouseFieldY));
+				Tower tower = new Tower(selectedTower, mouseFieldX, mouseFieldY);
+				path.addTower(mouseFieldX, mouseFieldY, tower);
+				this.addGameObject(tower);
+
 				materials.get(Material.GOLD).remove(selectedTower.getGoldCosts());
 				materials.get(Material.WOOD).remove(selectedTower.getWoodCosts());
 				materials.get(Material.STONE).remove(selectedTower.getStoneCosts());

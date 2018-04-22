@@ -32,4 +32,8 @@ public class Tower extends BasicStaticEntity {
 	public void update(Game game) {
 
 	}
+
+	public HitBox getHitBox() {
+		return hitBox;
+	}
 }
