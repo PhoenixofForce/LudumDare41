@@ -8,10 +8,11 @@ import game.gameobjects.Material;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
+import game.gameobjects.gameobjects.entities.entities.Enemy;
+import game.gameobjects.gameobjects.entities.entities.EnemyType;
 import game.gameobjects.gameobjects.entities.entities.Tower;
 import game.gameobjects.gameobjects.entities.entities.TowerType;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
-import game.gameobjects.gameobjects.wall.Background;
 import game.util.TimeUtil;
 import game.window.Camera;
 import game.window.Drawable;
@@ -24,9 +25,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Game {
-	public static final int PATH_WIDTH = 32;
-	public static final int PATH_HEIGHT = 18;
-
 	private Window window;							//displays the game
 
 	private int gameTick;							//current tick of the game (starts at 0) -> 60 Ticks Per Second
@@ -42,8 +40,7 @@ public class Game {
 	private int mouseFieldX, mouseFieldY;
 	private Map<Material, GameMaterial> materials;
 	private TowerType selectedTower = TowerType.MAGE;
-
-	private boolean[][] path;
+	private Path path;
 
 	public Game(Window window) {
 		this.window = window;
@@ -55,7 +52,8 @@ public class Game {
 		toRemove = new ConcurrentLinkedQueue<>();
 		toAdd = new ConcurrentLinkedQueue<>();
 
-		this.addGameObject(new CameraController());
+		path = new Path(this, 32, 18);
+		this.addGameObject(new CameraController(this));
 
 		mouseFieldX = 0;
 		mouseFieldY = 0;
@@ -76,53 +74,12 @@ public class Game {
 			}
 		});
 
-		generatePath();
-
 		materials = new HashMap<>();
 		for (int i = 0; i < Material.values().length; i++) {
 			GameMaterial m = new GameMaterial(i);
 			this.addGameObject(m);
 			materials.put(Material.values()[i], m);
 		}
-	}
-
-	private void generatePath() {
-		path = new boolean[PATH_WIDTH][PATH_HEIGHT];
-		Random r = new Random();
-		int yDump = PATH_HEIGHT/2;
-
-		for(int x = 0; x < PATH_WIDTH; x++) {
-			path[x][yDump] = true;
-
-			int mode = r.nextInt(3);
-			if(x > 2 && path[x-2][yDump]) {
-				if(mode == 2 && yDump > 0) yDump--;
-				else if(mode == 1 && yDump < PATH_HEIGHT-1) yDump++;
-				path[x][yDump] = true;
-			}
-		}
-		Map<HitBox, String> background = new HashMap<>();
-		for (int x = 0; x < PATH_WIDTH; x++) {
-			for (int y = 0; y < PATH_HEIGHT; y++) {
-
-				String tile = "grass";
-				if(path[x][y]) {
-					if(x > 0 && path[x-1][y] && y > 0 && path[x][y-1]) tile = "path_tr";
-					else if(x > 0 && path[x-1][y] && y < PATH_HEIGHT-1 && path[x][y+1]) tile = "path_br";
-					else if(x < PATH_WIDTH-1 && path[x+1][y] && y > 0 && path[x][y-1]) tile = "path_tl";
-					else if(x < PATH_WIDTH-1 && path[x+1][y] && y < PATH_HEIGHT-1 && path[x][y+1]) tile = "path_bl";
-					else tile = Math.random() <= 0.5f? "path_t": "path_b";
-
-					if(x == PATH_WIDTH-1) {
-						if(y > 0 && path[x][y-1] && !path[x-1][y]) tile = "path_tl";
-						else if(y < PATH_HEIGHT-1 && path[x][y+1] && !path[x-1][y]) tile = "path_bl";
-					}
-				}
-
-				background.put(new HitBox(x, y, 1, 1), tile);
-			}
-		}
-		this.addGameObject(new Background(background));
 	}
 
 	/**
@@ -187,19 +144,14 @@ public class Game {
 
 		int[] curr = {keyboard.getMouseX(), window.getHeight()-keyboard.getMouseY()};
 		int[] last = {keyboard.getLastMouseX(), window.getHeight()-keyboard.getLastMouseY()};
+		mouseFieldX = (int) (getCamera().getX() + 2*(curr[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
+		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
 		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick)) {
-			int[] currC = {keyboard.getMouseX(), window.getHeight()-keyboard.getMouseY()};
-			int clickFieldX = (int) (getCamera().getX() + 2*(currC[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
-			int clickFieldY = (int) (getCamera().getY() + 2*(currC[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
-
-			if(selectedTower == null) {
-
-			}
-			else if(clickFieldX < PATH_WIDTH && clickFieldX >= 0 && clickFieldY >= 0 && clickFieldY < PATH_HEIGHT && !path[clickFieldX][clickFieldY] && selectedTower.getStoneCosts() <= materials.get(Material.STONE).getAmount() && selectedTower.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && selectedTower.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
-				path[clickFieldX][clickFieldY] = true;
-				this.addGameObject(new Tower(selectedTower, clickFieldX, clickFieldY));
+			if(selectedTower != null && mouseFieldX < path.getWidth() && mouseFieldX >= 0 && mouseFieldY >= 0 && mouseFieldY < path.getHeight() && !path.isBlocked(mouseFieldX, mouseFieldY) && selectedTower.getStoneCosts() <= materials.get(Material.STONE).getAmount() && selectedTower.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && selectedTower.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
+				path.setBlocked(mouseFieldX, mouseFieldY, true);
+				this.addGameObject(new Tower(selectedTower, mouseFieldX, mouseFieldY));
 				materials.get(Material.GOLD).remove(selectedTower.getGoldCosts());
 				materials.get(Material.WOOD).remove(selectedTower.getWoodCosts());
 				materials.get(Material.STONE).remove(selectedTower.getStoneCosts());
@@ -209,12 +161,10 @@ public class Game {
 			}
 		}
 
+		if (Math.random() < (1/60f) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) this.addGameObject(new Enemy(EnemyType.GREEN_SLIME));
+
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1))
 			lastMouseClickTick = gameTick;
-
-
-		mouseFieldX = (int) (getCamera().getX() + 2*(curr[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
-		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 	}
 
 	/**
@@ -276,5 +226,9 @@ public class Game {
 		error.setTimer(120);
 
 		this.addGameObject(error);
+	}
+
+	public Path getPath() {
+		return path;
 	}
 }

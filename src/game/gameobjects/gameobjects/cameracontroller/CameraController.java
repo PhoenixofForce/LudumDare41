@@ -15,14 +15,14 @@ public class CameraController extends AbstractGameObject {
 	private float x, y;
 	private boolean start;
 
-	public CameraController() {
+	public CameraController(Game game) {
 		scroll = 0;
 		currentZoom = 0.15f;
 		start = true;
 		moveX = 0;
 		moveY = 0;
-		x = Game.PATH_WIDTH /2.0f;
-		y = Game.PATH_HEIGHT/2.0f;
+		x = game.getPath().getWidth() / 2.0f;
+		y = game.getPath().getHeight() / 2.0f;
 	}
 
 	@Override
@@ -32,15 +32,15 @@ public class CameraController extends AbstractGameObject {
 			game.getCamera().setZoom(currentZoom);
 			start = false;
 		} else {
-			if (scroll != 0){
+			if (scroll != 0) {
 				currentZoom *= Math.pow(1.2, scroll);
 				game.getCamera().setZoomSmooth(currentZoom, 300);
 			}
 			if (moveX != 0 || moveY != 0) {
 				float z = game.getCamera().getZoom();
 
-				x += 2*moveX / z / game.getWindow().getHeight();
-				y += 2*moveY / z / game.getWindow().getHeight();
+				x += 2 * moveX / z / game.getWindow().getHeight();
+				y += 2 * moveY / z / game.getWindow().getHeight();
 
 				game.getCamera().setPosition(x, y);
 

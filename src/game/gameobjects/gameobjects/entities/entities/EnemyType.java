@@ -4,7 +4,7 @@ import game.data.Sprite;
 
 public enum EnemyType {
 
-	BLUE_SLIME(1, 5, 5, 5, 100, "enemy_slime"), RED_SLIME(0.25f, 3, 15, 8, 100, "enemy_slime"), GREEN_SLIME(2.5f, 3, 5, 7, 100, "enemy_slime");
+	BLUE_SLIME(1, 5, 5, 5, 100, "enemy_slime_b"), RED_SLIME(0.25f, 3, 15, 8, 100, "enemy_slime_r"), GREEN_SLIME(2.5f, 3, 5, 7, 100, "enemy_slime_g");
 
 	private float speed, damage, health;
 	private int dropedGold;
