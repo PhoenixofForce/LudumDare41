@@ -273,4 +273,8 @@ public class Game {
 	public List<Enemy> getEnemies() {
 		return enemies;
 	}
+
+	public GameMaterial getMaterial(Material m) {
+		return materials.get(m);
+	}
 }

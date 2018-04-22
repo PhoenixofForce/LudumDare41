@@ -3,25 +3,16 @@ package game.gameobjects.gameobjects.particle;
 import game.data.Sprite;
 
 public enum ParticleType {
-	EXPLOSION(new Sprite(55, "explosion_1", "explosion_2", "explosion_3", "explosion_4", "explosion_5", "explosion_6", "explosion_7", "explosion_8", "explosion_9"), 30, 2f, 2f, false),
-	CLOUD(new Sprite(100, "cloud_0", "cloud_1", "cloud_2", "cloud_3", "cloud_4"), 29, 1.9375f, 1.5f, false),
-	RED(new Sprite(100, "particle_red"), 15, 0.125f, 0.125f, false),
-	LIGHT_GREEN(new Sprite(100, "particle_light_green"), 15, 0.125f, 0.125f, false),
-	GREEN(new Sprite(100, "particle_green"), 15, 0.125f, 0.125f, false),
-	DARK_GREEN(new Sprite(100, "particle_dark_green"), 15, 0.125f, 0.125f, false),
-	GRAY(new Sprite(100, "particle_gray"), 15, 0.125f, 0.125f, false),
-	DARK_GRAY(new Sprite(100, "particle_dark_gray"), 15, 0.125f, 0.125f, false),
-	LIGHT_GRAY(new Sprite(100, "particle_light_gray"), 15, 0.125f, 0.125f, false),
-	WHITE(new Sprite(100, "particle_white"), 15, 0.125f, 0.125f, false),
-	LIGHT_BLUE(new Sprite(100, "particle_light_blue"), 15, 0.125f, 0.125f, false),
-	BLUE(new Sprite(100, "particle_blue"), 15, 0.125f, 0.125f, false),
-	DARK_RED(new Sprite(100, "particle_dark_red"), 15, 0.125f, 0.125f, false),
-	ORANGE(new Sprite(100, "particle_orange"), 15, 0.125f, 0.125f, false),
-	YELLOW(new Sprite(100, "particle_yellow"), 15, 0.125f, 0.125f, false),
-	LIGHT_LIGHT_BROWN(new Sprite(100, "particle_light_light_brown"), 15, 0.125f, 0.125f, false),
-	LIGHT_BROWN(new Sprite(100, "particle_light_brown"), 15, 0.125f, 0.125f, false),
-	BROWN(new Sprite(100, "particle_brown"), 15, 0.125f, 0.125f, false),
-	DARK_BROWN(new Sprite(100, "particle_dark_brown"), 15, 0.125f, 0.125f, false);
+	EXPLOSION(new Sprite(55, "explosion_0", "explosion_1", "explosion_2", "explosion_3", "explosion_4", "explosion_5", "explosion_7", "explosion_6", "explosion_7"), 30, 2f, 2f, false),
+	ARROW_TRAIL_BIG(new Sprite(100, "particle_arrow_trail_big"), 100, 1, 1, false),
+	ARROW_TRAIL(new Sprite(100, "particle_arrow_trail"), 100, 1, 1, false),
+	MAGIC_PROJECTILE(new Sprite(100, "particle_magic_proj"), 100, 1, 1, false),
+	MAGIC_TRAIL_0_BIG(new Sprite(100, "particle_magic_trail_0_big"), 100, 1, 1, false),
+	MAGIC_TRAIL_0(new Sprite(100, "particle_magic_trail_0"), 100, 1, 1, false),
+	MAGIC_TRAIL_1_BIG(new Sprite(100, "particle_magic_trail_1_big"), 100, 1, 1, false),
+	MAGIC_TRAIL_1(new Sprite(100, "particle_magic_trail_1"), 100, 1, 1, false),
+	BOMB(new Sprite(100, "particle_bomb"), 100, 1, 1, false),
+	THUNDER(new Sprite(100, "particle_thunder_0", "particle_thunder_1", "particle_thunder_2", "particle_thunder_3", "particle_thunder_4", "particle_thunder_5", "particle_thunder_6", "particle_thunder_7", "particle_thunder_8", "particle_thunder_9", "particle_thunder_10", "particle_thunder_11"), 100, 1, 1, false);
 
 	private int lifeTime;
 	private boolean gravity;

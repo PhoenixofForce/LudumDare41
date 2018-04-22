@@ -2,6 +2,7 @@ package game.gameobjects.gameobjects.entities.entities;
 
 import game.Game;
 import game.data.hitbox.HitBox;
+import game.gameobjects.Material;
 import game.gameobjects.gameobjects.entities.BasicMovingEntity;
 import game.window.Window;
 import game.window.shader.ShaderType;
@@ -47,6 +48,8 @@ public class Enemy extends BasicMovingEntity{
 		float[] newPos = game.getPath().getPathPosition(position);
 		if (newPos == null || health <= 0) {
 			game.removeGameObject(this);
+			if(health <= 0) game.getMaterial(Material.GOLD).add(type.getDropedGold());
+			//else game.damage(type.getDamage());
 			return;
 		}
 		this.hitBox.x = newPos[0];

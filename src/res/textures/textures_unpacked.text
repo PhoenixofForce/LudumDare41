@@ -133,9 +133,9 @@ particle_explosion_5 184 232 24 24
 particle_explosion_6 208 232 24 24
 particle_explosion_7 232 232 24 24
 particle_thunder_0 288 0 16 32
-particle_thunder_2 304 0 16 32
-particle_thunder_3 320 0 16 32
-particle_thunder_4 288 32 16 32
+particle_thunder_1 304 0 16 32
+particle_thunder_2 320 0 16 32
+particle_thunder_3 288 32 16 32
 particle_thunder_4 304 32 16 32
 particle_thunder_5 320 32 16 32
 particle_thunder_6 288 64 16 32
