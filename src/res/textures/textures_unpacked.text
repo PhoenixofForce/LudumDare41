@@ -1,4 +1,4 @@
-147
+148
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -146,3 +146,4 @@ particle_thunder_10 304 96 16 32
 particle_thunder_11 320 96 16 32
 selection 0 192 32 32
 range_circle 176 96 80 80
+building_castle 176 0 16 32

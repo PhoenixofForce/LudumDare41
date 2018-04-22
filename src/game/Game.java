@@ -40,7 +40,7 @@ public class Game {
 	private int mouseFieldX, mouseFieldY;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
-	private TowerType selectedTower = TowerType.MAGE;
+	private TowerType selectedTower = TowerType.ARCHER;
 	private Path path;
 
 	public Game(Window window) {
@@ -59,6 +59,8 @@ public class Game {
 		mouseFieldX = 0;
 		mouseFieldY = 0;
 
+		particleSystem = new ParticleSystem();
+		this.addGameObject(particleSystem);
 		enemies = new ArrayList<>();
 
 		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), 5) {

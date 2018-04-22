@@ -13,8 +13,9 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class Enemy extends BasicMovingEntity{
-	private float position;
+
 	private EnemyType type;
+	private float position;
 	private int health;
 	public Enemy(EnemyType t) {
 		super(new HitBox(0, 0, 1,1), 0);
@@ -43,7 +44,7 @@ public class Enemy extends BasicMovingEntity{
 	public void update(Game game) {
 		super.update(game);
 
-		position += type.getSpeed()/60;
+		position += type.getSpeed()/60.0f;
 
 		float[] newPos = game.getPath().getPathPosition(position);
 		if (newPos == null || health <= 0) {
@@ -57,6 +58,14 @@ public class Enemy extends BasicMovingEntity{
 
 		setDrawingPriority(hitBox.y - game.getPath().getHeight());
 
+	}
+
+	public float[] getPositionIn(long time) {
+		return game.getPath().getPathPosition(position + time/(50.0f/3.0f)*(type.getSpeed()/60.0f));
+	}
+
+	public float[] getPositionIn(int ticks) {
+		return game.getPath().getPathPosition(position + ticks*(type.getSpeed()/60.0f));
 	}
 
 	@Override

@@ -3,10 +3,10 @@ package game.gameobjects.gameobjects.particle;
 import game.data.Sprite;
 
 public enum ParticleType {
-	EXPLOSION(new Sprite(55, "explosion_0", "explosion_1", "explosion_2", "explosion_3", "explosion_4", "explosion_5", "explosion_7", "explosion_6", "explosion_7"), 30, 2f, 2f, false),
-	ARROW_TRAIL_BIG(new Sprite(100, "particle_arrow_trail_big"), 100, 1, 1, false),
+	particle_explosion(new Sprite(55, "particle_explosion_0", "particle_explosion_1", "particle_explosion_2", "particle_explosion_3", "particle_explosion_4", "particle_explosion_5", "particle_explosion_7", "particle_explosion_6", "particle_explosion_7"), 30, 2f, 2f, false),
+	ARROW_TRAIL_BIG(new Sprite(100, "particle_arrow_trail_big"), 100, 0.5f, 0.5f, false),
 	ARROW_TRAIL(new Sprite(100, "particle_arrow_trail"), 100, 1, 1, false),
-	MAGIC_PROJECTILE(new Sprite(100, "particle_magic_proj"), 100, 1, 1, false),
+	MAGIC_PROJECTILE(new Sprite(100, "particle_magic_proj"), 100, 0.5f, 0.5f, false),
 	MAGIC_TRAIL_0_BIG(new Sprite(100, "particle_magic_trail_0_big"), 100, 1, 1, false),
 	MAGIC_TRAIL_0(new Sprite(100, "particle_magic_trail_0"), 100, 1, 1, false),
 	MAGIC_TRAIL_1_BIG(new Sprite(100, "particle_magic_trail_1_big"), 100, 1, 1, false),
