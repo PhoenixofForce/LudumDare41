@@ -1,4 +1,4 @@
-129
+135
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -27,9 +27,15 @@ tower_bomb_0 80 96 16 32
 tower_bomb_1 96 96 16 32
 tower_bomb_2 112 96 16 32
 tower_bomb_3 128 96 16 32
-enemy_slime_r 66 35 12 11
-enemy_slime_g 66 19 12 11
-enemy_slime_b 66 3 12 11
+enemy_slime_r_0 0 144 16 16
+enemy_slime_r_1 16 144 16 16
+enemy_slime_r_2 32 144 16 16
+enemy_slime_g_0 0 128 16 16
+enemy_slime_g_1 16 128 16 16
+enemy_slime_g_2 32 128 16 16
+enemy_slime_b_0 0 112 16 16
+enemy_slime_b_1 16 112 16 16
+enemy_slime_b_2 32 112 16 16
 material_gold 0 48 32 16
 material_wood 0 64 32 16
 material_stone 0 80 32 16

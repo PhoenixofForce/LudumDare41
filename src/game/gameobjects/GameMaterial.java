@@ -15,8 +15,8 @@ public class GameMaterial extends AbstractGameObject {
 	private float remainder;
 
 	public GameMaterial(int i) {
-		this.amount = 100;
-		this.displayAmount = 100;
+		this.amount = 300;
+		this.displayAmount = 0;
 		this.material = Material.values()[i];
 		this.displayText = new Text(-0.99f, 0.95f - i*0.0625f, -100, "<"+material.toString().toLowerCase() +"> 0", 0.04f, false, 0f, 0f, Color.WHITE);
 
