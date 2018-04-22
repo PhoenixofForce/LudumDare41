@@ -1,6 +1,6 @@
 #version 130
 
-const float border = 0.2;
+const float border = 0.0625;
 
 uniform sampler2D tex;
 uniform int lightAmount;
@@ -11,7 +11,7 @@ uniform float useCamera;
 
 uniform float width, height;
 
-uniform float health;
+uniform int amount;
 
 in vec2 fragPos;
 
@@ -25,13 +25,16 @@ void main() {
     }
     brightness = vec3(clamp(brightness.r, 0, 1),clamp(brightness.g, 0, 1),clamp(brightness.b, 0, 1));
 
-    float y = (fragPos.y - border)/(1 - 2*border);
+    float black = 0;
 
-    float borderX = border * (height/width);
-    float x = (fragPos.x - borderX) / (1-2*borderX);
+    float borderY = border/height*0.15;
+    float borderX = borderY*(height/width)/2;
 
-    float black = 1-(step(0, x) * step(0, y) * step(y,1) * step(x,health));
+    float x = mod(fragPos.x, (1.0/amount));
 
-    finalColor = vec4(35.0/255, 33.0/255, 61.0/255, 1) * black + (1-black) * vec4(1-health, health, 0, 1);
+    if (x < borderX || x > (1.0/amount - borderX)) black = 1;
+    if (fragPos.y < borderY || fragPos.y > (1-borderY)) black = 1;
+
+    finalColor = vec4(92.0/255, 56.0/255, 65.0/255, 1) * black + (1-black) * vec4(197.0/255, 104.0/255, 118.0/255, 1);
     finalColor = vec4(finalColor.r * (brightness.r*(1-minBrightness) + minBrightness), finalColor.g * (brightness.g*(1-minBrightness) + minBrightness), finalColor.b * (brightness.b*(1-minBrightness) + minBrightness), finalColor.a);
 }
