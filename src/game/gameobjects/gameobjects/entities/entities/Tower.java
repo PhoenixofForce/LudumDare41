@@ -29,7 +29,7 @@ public class Tower extends BasicStaticEntity {
 
 	public boolean inRange(float[] pos) {
 		if (pos == null) return false;
-		return Math.sqrt(Math.pow(pos[0] - getHitBox().getCenterX(), 2) + Math.pow(pos[1] - getHitBox().getCenterY(), 2)) <= type.getRange();
+		return Math.sqrt(Math.pow(pos[0] +0.5f - getHitBox().getCenterX(), 2) + Math.pow(pos[1] +0.5f - getHitBox().getCenterY(), 2)) <= type.getRange();
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class Tower extends BasicStaticEntity {
 		Enemy focus = null;
 		for(int i = 0; i < game.getEnemies().size(); i++) {
 			Enemy e = game.getEnemies().get(i);
-			if(inRange(e.getPositionIn(30)) && (focus == null || focus.getPosition() < e.getPosition())) {
+			if(inRange(e.getPositionIn(type.getParticleType().getLifeTime())) && (focus == null || focus.getPosition() < e.getPosition())) {
 				focus = e;
 			}
 		}

@@ -5,6 +5,7 @@ import game.data.hitbox.HitBox;
 import game.gameobjects.GameMaterial;
 import game.gameobjects.GameObject;
 import game.gameobjects.Material;
+import game.gameobjects.gameobjects.Menu;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
@@ -35,6 +36,7 @@ public class Game {
 
 	private ParticleSystem particleSystem;			//display and store all particles
 	private CameraController cameraController;
+	private Menu menu;
 
 	private int mouseFieldX, mouseFieldY;
 	private Map<Material, GameMaterial> materials;
@@ -115,6 +117,9 @@ public class Game {
 			this.addGameObject(m);
 			materials.put(Material.values()[i], m);
 		}
+
+		this.menu = new Menu();
+		this.addGameObject(menu);
 	}
 
 	/**
@@ -186,8 +191,14 @@ public class Game {
 		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
-		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick)) {
-			if(selectedTower != null && mouseFieldX < path.getWidth() && mouseFieldX >= 0 && mouseFieldY >= 0 && mouseFieldY < path.getHeight() && !path.isBlocked(mouseFieldX, mouseFieldY) && selectedTower.getStoneCosts() <= materials.get(Material.STONE).getAmount() && selectedTower.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && selectedTower.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
+		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick) && selectedTower != null) {
+			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
+				createErrorText("You cannot place this here");
+				getCamera().addScreenshake(0.02f);
+			} else if (selectedTower.getStoneCosts() > materials.get(Material.STONE).getAmount() || selectedTower.getWoodCosts() > materials.get(Material.WOOD).getAmount() || selectedTower.getGoldCosts() > materials.get(Material.GOLD).getAmount()) {
+				createErrorText("Not enough materials");
+				getCamera().addScreenshake(0.02f);
+			} else {
 				Tower tower = new Tower(selectedTower, mouseFieldX, mouseFieldY);
 				path.addTower(mouseFieldX, mouseFieldY, tower);
 				this.addGameObject(tower);
@@ -195,9 +206,6 @@ public class Game {
 				materials.get(Material.GOLD).remove(selectedTower.getGoldCosts());
 				materials.get(Material.WOOD).remove(selectedTower.getWoodCosts());
 				materials.get(Material.STONE).remove(selectedTower.getStoneCosts());
-			} else {
-				createErrorText("You cannot place this here");
-				getCamera().addScreenshake(0.02f);
 			}
 		}
 
@@ -262,7 +270,7 @@ public class Game {
 	}
 
 	public void createErrorText(String text) {
-		Text error = new Text(-0.975f, -0.5f, -1000, text, 0.05f, false, 0f, 1f, Color.RED);
+		Text error = new Text(0.975f, -0.5f, -1000, text, 0.05f, false, 1f, 1f, Color.RED);
 		error.setTimer(120);
 
 		this.addGameObject(error);

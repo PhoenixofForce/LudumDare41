@@ -32,6 +32,6 @@ void main() {
 
     float black = 1-(step(0, x) * step(0, y) * step(y,1) * step(x,health));
 
-    finalColor = vec4(0, 0, 0, 0.75) * black + (1-black) * vec4(1-health, health, 0, 0.75);
+    finalColor = vec4(35/255, 33/255, 61/255, 1) * black + (1-black) * vec4(1-health, health, 0, 1);
     finalColor = vec4(finalColor.r * (brightness.r*(1-minBrightness) + minBrightness), finalColor.g * (brightness.g*(1-minBrightness) + minBrightness), finalColor.b * (brightness.b*(1-minBrightness) + minBrightness), finalColor.a);
 }

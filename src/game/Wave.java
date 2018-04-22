@@ -31,9 +31,6 @@ public class Wave {
 			state = 1;
 		}
 
-		System.out.println(state);
-
-		if(state == 1 && blueSlimes() <= currentBs && redSlimes() <= currentRs && greenSlimes() <= currentGs) state = 2;
 		if(state == 1) {
 			if(currentRs <= redSlimes() && game.getGameTick()-60 >= lastTickSpawned) {
 				game.addGameObject(new Enemy(EnemyType.RED_SLIME));
@@ -49,8 +46,9 @@ public class Wave {
 				lastTickSpawned = game.getGameTick();
 			}
 		}
+		if(state == 1 && blueSlimes() <= currentBs && redSlimes() <= currentRs && greenSlimes() <= currentGs) state = 2;
 
-		if((waveEnded <= TimeUtil.getTime() - 90000L && game.getEnemies().size() == 0) && state == 2) {
+		if((waveEnded <= TimeUtil.getTime() - 90000L || game.getEnemies().size() == 0) && state == 2) {
 			state = 0;
 			wave++;
 			waveEnded = TimeUtil.getTime();

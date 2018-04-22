@@ -1,6 +1,7 @@
 package game.window.shader.shader;
 
 import game.window.shader.ShaderProgram;
+import org.lwjgl.opengl.GL11;
 
 /**
  * A shader used to draw rectangles with only a single image
@@ -84,5 +85,13 @@ public class BasicShader extends ShaderProgram {
 	 */
 	public void setColor(float r, float g, float b, float a) {
 		setUniform4f(colorLocation, r, g, b, a);
+	}
+
+	public void draw(float x, float y, float width, float height, int tX, int tY, int tWidth, int tHeight, boolean useCamera) {
+		start();
+		setBounds(x, y, width, height);
+		setTextureSheetBounds(tX, tY, tWidth, tHeight);
+		setUseCamera(useCamera);
+		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 	}
 }

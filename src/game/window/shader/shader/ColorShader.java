@@ -1,6 +1,7 @@
 package game.window.shader.shader;
 
 import game.window.shader.ShaderProgram;
+import org.lwjgl.opengl.GL11;
 
 /**
  * A shader used to draw rectangles with only one color
@@ -56,5 +57,12 @@ public class ColorShader extends ShaderProgram {
 	 */
 	public void setColor(float r, float g, float b, float a) {
 		setUniform4f(colorLocation, r, g, b, a);
+	}
+
+	public void draw(float x, float y, float width, float height, float r, float g, float b, float a) {
+		start();
+		setBounds(x, y, width, height);
+		setColor(r, g, b, a);
+		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 	}
 }

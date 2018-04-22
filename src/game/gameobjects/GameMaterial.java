@@ -83,6 +83,6 @@ public class GameMaterial extends AbstractGameObject {
 	public void add(int amount) {
 		this.amount += amount;
 
-		this.speed = Math.abs(displayAmount - amount) / (1f) / 60f;
+		this.speed = Math.abs(displayAmount - this.amount) / (1f) / 60f;
 	}
 }

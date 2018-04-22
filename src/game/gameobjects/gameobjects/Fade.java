@@ -48,7 +48,7 @@ public class Fade extends AbstractGameObject implements Drawable {
 		int t = (currentTick - startTick);
 
 		shader.start();
-		shader.setBounds(-1000, -1000, 2000, 2000);
+		shader.setBounds(-2, -2, 2, 2);
 
 		if (t <= Constants.FADE_TIME / 2.0f) {
 			//alpha is increasing
