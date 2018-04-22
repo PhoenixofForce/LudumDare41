@@ -31,13 +31,14 @@ public class Enemy extends BasicMovingEntity{
 	public void draw(Window window, long time) {
 		super.draw(window, time);
 
-		HealthBarShader shader = (HealthBarShader) window.getShaderHandler().getShader(ShaderType.HEALTH_BAR_SHADER);
-
-		shader.start();
-		shader.setUseCamera(true);
-		shader.setBounds(hitBox.x, hitBox.y, hitBox.width, 0.2f);
-		shader.setHealth(((float)health)/type.getHealth());
-		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+		if(health != type.getHealth()) {
+			HealthBarShader shader = (HealthBarShader) window.getShaderHandler().getShader(ShaderType.HEALTH_BAR_SHADER);
+			shader.start();
+			shader.setUseCamera(true);
+			shader.setBounds(hitBox.x, hitBox.y, hitBox.width, 0.2f);
+			shader.setHealth(((float) health) / type.getHealth());
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+		}
 	}
 
 	@Override

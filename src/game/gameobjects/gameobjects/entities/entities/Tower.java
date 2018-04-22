@@ -66,13 +66,13 @@ public class Tower extends BasicStaticEntity {
 					}
 
 					//AOE
-					if(type.getParticleType() == ParticleType.BOMB) {
+					if(type.getDamageRange() > 0) {
 						for(int j = 0; j < game.getEnemies().size(); j++) {
 							Enemy e2 = game.getEnemies().get(j);
 							if(e2.equals(2)) continue;
-							double distance = Math.sqrt(Math.pow(e2.getHitBox().x - e.getHitBox().x, 2) + Math.pow(e2.getHitBox().x - e.getHitBox().y, 2));
-							if(distance < 16.0f) {
-								e2.damage(1 + Math.round((float)((type.getDamage()-1)/(distance/2))));
+							double distance = Math.sqrt(Math.pow(e2.getHitBox().x - e.getHitBox().x, 2) + Math.pow(e2.getHitBox().y - e.getHitBox().y, 2));
+							if(distance < type.getDamageRange()) {
+								e2.damage(Math.round((float)((type.getDamage())/(Math.pow(distance+1, 2)))));
 							}
 						}
 					}
@@ -96,13 +96,15 @@ public class Tower extends BasicStaticEntity {
 					damageQueue.put(focus, new ArrayList<>());
 				}
 				int damageIn = type.getParticleType().getLifeTime();
-				damageQueue.get(focus).add(damageIn);
 
 				float[] pos = focus.getPositionIn(damageIn);
-				if(type.getParticleType() != ParticleType.THUNDER) game.getParticleSystem().createParticle(type.getParticleType(), getHitBox().getCenterX(), getHitBox().getCenterY(), (pos[0] +0.5f - getHitBox().getCenterX())/((float)damageIn), (pos[1] +0.5f - getHitBox().getCenterY())/((float)damageIn));
-				else {
+				if(type.getParticleType() != ParticleType.THUNDER) {
+					damageQueue.get(focus).add(damageIn);
+					game.getParticleSystem().createParticle(type.getParticleType(), getHitBox().getCenterX(), getHitBox().getCenterY(), (pos[0] +0.5f - getHitBox().getCenterX())/((float)damageIn), (pos[1] +0.5f - getHitBox().getCenterY())/((float)damageIn));
+				} else {
 					pos = focus.getPositionIn(42);
 					game.getParticleSystem().createParticle(ParticleType.THUNDER, pos[0], pos[1]+0.9f, 0, 0);
+					damageQueue.get(focus).add(42);
 				}
 
 				lastAttack = TimeUtil.getTime();

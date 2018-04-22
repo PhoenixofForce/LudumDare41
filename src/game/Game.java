@@ -9,7 +9,6 @@ import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
 import game.gameobjects.gameobjects.entities.entities.Enemy;
-import game.gameobjects.gameobjects.entities.entities.EnemyType;
 import game.gameobjects.gameobjects.entities.entities.Tower;
 import game.gameobjects.gameobjects.entities.entities.TowerType;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
@@ -40,8 +39,10 @@ public class Game {
 	private int mouseFieldX, mouseFieldY;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
-	private TowerType selectedTower = TowerType.BOMB;
+	private TowerType selectedTower = TowerType.ARCHER;
 	private Path path;
+
+	private Wave wave;
 
 	public Game(Window window) {
 		this.window = window;
@@ -55,6 +56,8 @@ public class Game {
 
 		path = new Path(this, 32, 18);
 		this.addGameObject(new CameraController(this));
+
+		wave = new Wave(this);
 
 		mouseFieldX = 0;
 		mouseFieldY = 0;
@@ -149,6 +152,7 @@ public class Game {
 			}
 
 			handleInput();
+			wave.update();
 
 			//Sort gameObjects for priority
 			gameObjects.sort((o1, o2) -> Float.compare(o2.getPriority(), o1.getPriority()));
@@ -195,10 +199,6 @@ public class Game {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
 			}
-		}
-
-		if (Math.random() < (1/60f) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) {
-			this.addGameObject(new Enemy(EnemyType.values()[(int)Math.round(Math.random()*(EnemyType.values().length-1))]));
 		}
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1))
