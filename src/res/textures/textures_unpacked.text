@@ -1,4 +1,4 @@
-135
+147
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -132,5 +132,17 @@ particle_explosion_4 232 208 24 24
 particle_explosion_5 184 232 24 24
 particle_explosion_6 208 232 24 24
 particle_explosion_7 232 232 24 24
+particle_thunder_0 288 0 16 32
+particle_thunder_2 304 0 16 32
+particle_thunder_3 320 0 16 32
+particle_thunder_4 288 32 16 32
+particle_thunder_4 304 32 16 32
+particle_thunder_5 320 32 16 32
+particle_thunder_6 288 64 16 32
+particle_thunder_7 304 64 16 32
+particle_thunder_8 320 64 16 32
+particle_thunder_9 288 96 16 32
+particle_thunder_10 304 96 16 32
+particle_thunder_11 320 96 16 32
 selection 0 192 32 32
 range_circle 176 96 80 80

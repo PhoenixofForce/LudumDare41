@@ -58,7 +58,7 @@ public class Game {
 		mouseFieldX = 0;
 		mouseFieldY = 0;
 
-		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), -100) {
+		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), 5) {
 			{
 				setSprite(new Sprite(100, "range_circle"));
 			}
@@ -85,7 +85,7 @@ public class Game {
 			}
 		});
 
-		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), -2) {
+		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), 4) {
 			{
 				setSprite(new Sprite(100, "selection"));
 			}
@@ -190,7 +190,9 @@ public class Game {
 			}
 		}
 
-		if (Math.random() < (1/60f) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) this.addGameObject(new Enemy(EnemyType.GREEN_SLIME));
+		if (Math.random() < (1/60f) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) {
+			this.addGameObject(new Enemy(EnemyType.values()[(int)Math.round(Math.random()*(EnemyType.values().length-1))]));
+		}
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1))
 			lastMouseClickTick = gameTick;
