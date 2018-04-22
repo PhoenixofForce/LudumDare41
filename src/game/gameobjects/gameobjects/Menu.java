@@ -72,7 +72,8 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 				@Override
 				public void onClick() {
-
+					menuRows = Arrays.asList(mainToolBar);
+					game.setSelectedTower(type);
 				}
 			};
 
@@ -99,6 +100,8 @@ public class Menu extends AbstractGameObject implements Drawable {
 		} else {
 			hightlighted = mouseRow.getMenuItem(mousePositionX);
 			menuRows = hightlighted.getMenuRows();
+
+			if (mouseClicked) hightlighted.onClick();
 		}
 
 		for (MenuRow menuRow: menuRows) menuRow.update();

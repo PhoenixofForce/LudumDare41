@@ -198,7 +198,7 @@ public class Game {
 		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 
 		mouseConsumed = menu.setMousePosition(2.0f*curr[0]/window.getWidth() - 1, 2.0f*curr[1]/window.getHeight()-1);
-		menu.setMouseClicked((lastMouseClickTick +1 != gameTick));
+		menu.setMouseClicked((lastMouseClickTick +1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
 		if (!mouseConsumed && keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
 		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick) && selectedTower != null && !mouseConsumed) {
@@ -296,5 +296,9 @@ public class Game {
 
 	public GameMaterial getMaterial(Material m) {
 		return materials.get(m);
+	}
+
+	public void setSelectedTower(TowerType selectedTower) {
+		this.selectedTower = selectedTower;
 	}
 }
