@@ -1,0 +1,37 @@
+#version 130
+
+const float border = 0.2;
+
+uniform sampler2D tex;
+uniform int lightAmount;
+uniform vec3 lights[128];
+uniform vec3 lightColors[128];
+uniform float minBrightness;
+uniform float useCamera;
+
+uniform float width, height;
+
+uniform float health;
+
+in vec2 fragPos;
+
+out vec4 finalColor;
+
+void main() {
+    vec3 brightness = vec3 (1-useCamera, 1-useCamera, 1-useCamera);
+    for (int i = 0; i < useCamera*lightAmount; i++) {
+        float distance = ((lights[i].x - fragPos.x)*(lights[i].x - fragPos.x) + (lights[i].y - fragPos.y)*(lights[i].y - fragPos.y));
+        brightness += lightColors[i] * clamp(pow(lights[i].z, distance), 0, 1);
+    }
+    brightness = vec3(clamp(brightness.r, 0, 1),clamp(brightness.g, 0, 1),clamp(brightness.b, 0, 1));
+
+    float y = (fragPos.y - border)/(1 - 2*border);
+
+    float borderX = border * (height/width);
+    float x = (fragPos.x - borderX) / (1-2*borderX);
+
+    float black = 1-(step(0, x) * step(0, y) * step(y,1) * step(x,health));
+
+    finalColor = vec4(0, 0, 0, 0.75) * black + (1-black) * vec4(1-health, health, 0, 0.75);
+    finalColor = vec4(finalColor.r * (brightness.r*(1-minBrightness) + minBrightness), finalColor.g * (brightness.g*(1-minBrightness) + minBrightness), finalColor.b * (brightness.b*(1-minBrightness) + minBrightness), finalColor.a);
+}
