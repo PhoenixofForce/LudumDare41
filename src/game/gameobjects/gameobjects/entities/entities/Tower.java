@@ -25,8 +25,9 @@ public class Tower extends BasicStaticEntity {
 		setSprite(type.getSprite());
 	}
 
-	public boolean inRange(float x, float y) {
-		return Math.sqrt(Math.pow(x - getHitBox().x, 2) + Math.pow(y - getHitBox().y, 2)) <= type.getRange();
+	public boolean inRange(float[] pos) {
+		if (pos == null) return false;
+		return Math.sqrt(Math.pow(pos[0] - getHitBox().getCenterX(), 2) + Math.pow(pos[1] - getHitBox().getCenterY(), 2)) <= type.getRange();
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class Tower extends BasicStaticEntity {
 		Enemy focus = null;
 		for(int i = 0; i < game.getEnemies().size(); i++) {
 			Enemy e = game.getEnemies().get(i);
-			if(inRange(e.getHitBox().x, e.getHitBox().y) && (focus == null || focus.getPosition() < e.getPosition())) {
+			if(inRange(e.getPositionIn(30)) && (focus == null || focus.getPosition() < e.getPosition())) {
 				focus = e;
 			}
 		}
@@ -73,7 +74,7 @@ public class Tower extends BasicStaticEntity {
 				damageQueue.get(focus).add(damageIn);
 
 				float[] pos = focus.getPositionIn(damageIn);
-				game.getParticleSystem().createParticle(type.getParticleType(), getHitBox().x, getHitBox().y, (pos[0] - getHitBox().x)/((float)damageIn), (pos[1] - getHitBox().y)/((float)damageIn));
+				game.getParticleSystem().createParticle(type.getParticleType(), getHitBox().getCenterX(), getHitBox().getCenterY(), (pos[0] +0.5f - getHitBox().getCenterX())/((float)damageIn), (pos[1] +0.5f - getHitBox().getCenterY())/((float)damageIn));
 
 				lastAttack = TimeUtil.getTime();
 			}

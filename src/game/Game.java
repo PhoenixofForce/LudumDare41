@@ -145,6 +145,7 @@ public class Game {
 				if (gameObject instanceof Drawable) window.addDrawable((Drawable) gameObject);
 				if (gameObject instanceof ParticleSystem) particleSystem = (ParticleSystem) gameObject;
 				if (gameObject instanceof CameraController) cameraController = (CameraController) gameObject;
+				if (gameObject instanceof Enemy) enemies.add((Enemy) gameObject);
 			}
 
 			handleInput();
@@ -219,7 +220,6 @@ public class Game {
 	public void addGameObject(GameObject gameObject) {
 		if (!toAdd.contains(gameObject) && !gameObjects.contains(gameObject)) {
 			toAdd.add(gameObject);
-			if(gameObject instanceof Enemy) enemies.add((Enemy) gameObject);
 		}
 	}
 
