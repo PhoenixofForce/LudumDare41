@@ -39,6 +39,7 @@ public class Game {
 
 	private int mouseFieldX, mouseFieldY;
 	private Map<Material, GameMaterial> materials;
+	private List<Enemy> enemies;
 	private TowerType selectedTower = TowerType.MAGE;
 	private Path path;
 
@@ -57,6 +58,8 @@ public class Game {
 
 		mouseFieldX = 0;
 		mouseFieldY = 0;
+
+		enemies = new ArrayList<>();
 
 		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), 5) {
 			{
@@ -127,6 +130,7 @@ public class Game {
 				if (gameObject instanceof Drawable) window.removeDrawable((Drawable) gameObject);
 				if (gameObject instanceof ParticleSystem) particleSystem = null;
 				if (gameObject instanceof CameraController) cameraController = null;
+				if(gameObject instanceof Enemy) enemies.remove(gameObject);
 			}
 
 			//Add gameObjects
@@ -211,7 +215,10 @@ public class Game {
 	 * @param gameObject the gameObject to be added
 	 **/
 	public void addGameObject(GameObject gameObject) {
-		if (!toAdd.contains(gameObject) && !gameObjects.contains(gameObject)) toAdd.add(gameObject);
+		if (!toAdd.contains(gameObject) && !gameObjects.contains(gameObject)) {
+			toAdd.add(gameObject);
+			if(gameObject instanceof Enemy) enemies.add((Enemy) gameObject);
+		}
 	}
 
 	public void removeGameObject(GameObject gameObject) {
@@ -261,5 +268,9 @@ public class Game {
 
 	public Path getPath() {
 		return path;
+	}
+
+	public List<Enemy> getEnemies() {
+		return enemies;
 	}
 }

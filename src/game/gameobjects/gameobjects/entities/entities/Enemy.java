@@ -14,9 +14,11 @@ import java.awt.*;
 public class Enemy extends BasicMovingEntity{
 	private float position;
 	private EnemyType type;
+	private int health;
 	public Enemy(EnemyType t) {
 		super(new HitBox(0, 0, 1,1), 0);
 
+		this.health = (int) t.getHealth();
 		this.type = t;
 		position = 0;
 
@@ -32,7 +34,7 @@ public class Enemy extends BasicMovingEntity{
 		shader.start();
 		shader.setUseCamera(true);
 		shader.setBounds(hitBox.x, hitBox.y, hitBox.width, 0.2f);
-		shader.setHealth(1-position / game.getPath().getPathLength());
+		shader.setHealth(((float)health)/type.getHealth());
 		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 	}
 
@@ -43,7 +45,7 @@ public class Enemy extends BasicMovingEntity{
 		position += type.getSpeed()/60;
 
 		float[] newPos = game.getPath().getPathPosition(position);
-		if (newPos == null) {
+		if (newPos == null || health <= 0) {
 			game.removeGameObject(this);
 			return;
 		}
@@ -57,5 +59,13 @@ public class Enemy extends BasicMovingEntity{
 	@Override
 	public float getPriority() {
 		return 0;
+	}
+
+	public void damage(int damage) {
+		this.health = Math.max(0, health-damage);
+	}
+
+	protected float getPosition() {
+		return position;
 	}
 }
