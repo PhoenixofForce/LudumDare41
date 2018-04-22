@@ -5,7 +5,6 @@ import game.data.hitbox.HitBox;
 import game.gameobjects.GameMaterial;
 import game.gameobjects.GameObject;
 import game.gameobjects.Material;
-import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
 import game.gameobjects.gameobjects.entities.entities.Tower;
@@ -18,7 +17,6 @@ import game.window.Drawable;
 import game.window.Keyboard;
 import game.window.Window;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -181,7 +179,7 @@ public class Game {
 	/**
 	 * update the Keyboard and Controller Inputs
 	 **/
-	private int lastPressedTick = 0;
+	private int lastMouseClickTick = 0;
 	private void handleInput() {
 		Keyboard keyboard = window.getKeyboard();
 
@@ -192,26 +190,24 @@ public class Game {
 		int[] last = {keyboard.getLastMouseX(), window.getHeight()-keyboard.getLastMouseY()};
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
-		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastPressedTick+1 != gameTick)) {
+		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick)) {
 			int[] currC = {keyboard.getMouseX(), window.getHeight()-keyboard.getMouseY()};
 			int clickFieldX = (int) (getCamera().getX() + 2*(currC[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
 			int clickFieldY = (int) (getCamera().getY() + 2*(currC[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 
-			lastPressedTick = gameTick;
-			if(path[clickFieldX][clickFieldY]) {
-				//getCamera().addScreenshake(0.1f);  //Causes trouble when clicken, because of multiple calls
-				return;
-			}
-
 			TowerType t = TowerType.VOLT;
-			if(t.getStoneCosts() <= materials.get(Material.STONE).getAmount() && t.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && t.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
+			if(!path[clickFieldX][clickFieldY] && t.getStoneCosts() <= materials.get(Material.STONE).getAmount() && t.getWoodCosts() <= materials.get(Material.WOOD).getAmount() && t.getGoldCosts() <= materials.get(Material.GOLD).getAmount()) {
 				path[clickFieldX][clickFieldY] = true;
 				this.addGameObject(new Tower(t, clickFieldX, clickFieldY));
 				materials.get(Material.GOLD).remove(t.getGoldCosts());
 				materials.get(Material.WOOD).remove(t.getWoodCosts());
 				materials.get(Material.STONE).remove(t.getStoneCosts());
-			} else getCamera().addScreenshake(0.1f);
+			} else getCamera().addScreenshake(0.02f);
 		}
+
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1))
+			lastMouseClickTick = gameTick;
+
 
 		mouseFieldX = (int) (getCamera().getX() + 2*(curr[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
 		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
