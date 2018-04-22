@@ -23,6 +23,6 @@ void main() {
     brightness = vec3(clamp(brightness.r, 0, 1),clamp(brightness.g, 0, 1),clamp(brightness.b, 0, 1));
 
     finalColor = texture2D(tex, fragTex);
-    finalColor = mix(finalColor, finalColor.a*color, step(finalColor.r+finalColor.g+finalColor.b, 0.01));
+    finalColor = vec4(clamp(finalColor.r + color.r, 0, 1), clamp(finalColor.g + color.g, 0, 1), clamp(finalColor.b + color.b, 0, 1), finalColor.a*color.a);
     finalColor = vec4(finalColor.r * (brightness.r*(1-minBrightness) + minBrightness), finalColor.g * (brightness.g*(1-minBrightness) + minBrightness), finalColor.b * (brightness.b*(1-minBrightness) + minBrightness), finalColor.a);
 }
