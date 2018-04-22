@@ -5,6 +5,7 @@ import game.data.hitbox.HitBox;
 import game.gameobjects.GameMaterial;
 import game.gameobjects.GameObject;
 import game.gameobjects.Material;
+import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
 import game.gameobjects.gameobjects.entities.entities.Tower;
@@ -17,6 +18,7 @@ import game.window.Drawable;
 import game.window.Keyboard;
 import game.window.Window;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -120,10 +122,6 @@ public class Game {
 			}
 		}
 		this.addGameObject(new Background(background));
-
-		/*for(boolean[] a: path) {
-			System.out.println(Arrays.toString(a));
-		}*/
 	}
 
 	/**
@@ -202,7 +200,10 @@ public class Game {
 				materials.get(Material.GOLD).remove(t.getGoldCosts());
 				materials.get(Material.WOOD).remove(t.getWoodCosts());
 				materials.get(Material.STONE).remove(t.getStoneCosts());
-			} else getCamera().addScreenshake(0.02f);
+			} else {
+				createErrorText("You can not place this here");
+				getCamera().addScreenshake(0.02f);
+			}
 		}
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1))
@@ -265,5 +266,12 @@ public class Game {
 	 **/
 	public int getGameTick() {
 		return gameTick;
+	}
+
+	public void createErrorText(String text) {
+		Text error = new Text(-0.975f, -0.5f, -1000, text, 0.05f, false, 0f, 1f, Color.RED);
+		error.setTimer(120);
+
+		this.addGameObject(error);
 	}
 }
