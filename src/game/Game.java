@@ -39,6 +39,7 @@ public class Game {
 	private Menu menu;
 
 	private int mouseFieldX, mouseFieldY;
+	private boolean mouseConsumed;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
 	private TowerType selectedTower = TowerType.ARCHER;
@@ -63,6 +64,7 @@ public class Game {
 
 		mouseFieldX = 0;
 		mouseFieldY = 0;
+		mouseConsumed = false;
 
 		particleSystem = new ParticleSystem();
 		this.addGameObject(particleSystem);
@@ -83,7 +85,7 @@ public class Game {
 			@Override
 			public void update(Game game) {
 				mouseOverTower = path.getTower(mouseFieldX, mouseFieldY);
-				if (mouseOverTower == null) {
+				if (mouseOverTower == null || mouseConsumed) {
 					hitBox.width = 0;
 					hitBox.height = 0;
 				} else {
@@ -106,6 +108,11 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
+				if (mouseConsumed) {
+					hitBox.width = 0;
+				} else {
+					hitBox.width = 1;
+				}
 				hitBox.x = mouseFieldX;
 				hitBox.y = mouseFieldY;
 			}
@@ -190,8 +197,11 @@ public class Game {
 		mouseFieldX = (int) (getCamera().getX() + 2*(curr[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
 		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
 
-		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
-		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick) && selectedTower != null) {
+		mouseConsumed = menu.setMousePosition(2.0f*curr[0]/window.getWidth() - 1, 2.0f*curr[1]/window.getHeight()-1);
+		menu.setMouseClicked((lastMouseClickTick +1 != gameTick));
+
+		if (!mouseConsumed && keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
+		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick) && selectedTower != null && !mouseConsumed) {
 			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);

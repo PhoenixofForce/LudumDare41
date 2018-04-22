@@ -12,85 +12,67 @@ import game.window.shader.shader.ColorShader;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Menu extends AbstractGameObject implements Drawable {
-	private MenuRow mainToolBar = createMainToolBar();
-	private MenuRow buildingToolBar = createBuildingToolBar();
+	private MenuRow mainToolBar = new MenuRow(null, 0.1f);
+	private MenuRow buildingToolBar = new MenuRow(mainToolBar, 0.2f);
 
 	private List<MenuRow> menuRows;
 
+	private float mousePositionX, mousePositionY;
+	private boolean mouseClicked;
+
 	public Menu() {
 		menuRows = new ArrayList<>();
+
+		createMainToolBar();
+		createBuildingToolBar();
 
 		menuRows.add(mainToolBar);
 		menuRows.add(buildingToolBar);
 	}
 
-	private MenuRow createMainToolBar() {
-		MenuRow menuRow = new MenuRow(null);
-		menuRow.setX(0);
+	private void createMainToolBar() {
+		mainToolBar.setX(0);
 
-		MenuItem menuItem1 = new IconMenuItem("textures_enemy_slime_r_0") {
+		MenuItem menuItem1 = new IconMenuItem("textures_symbol_build", mainToolBar, buildingToolBar) {
 			@Override
 			public void onClick() {
 
 			}
-
-			@Override
-			public void onHover() {
-
-			}
 		};
-		MenuItem menuItem2 = new IconMenuItem("textures_enemy_slime_r_1") {
+		MenuItem menuItem2 = new IconMenuItem("textures_symbol_upgrade", mainToolBar) {
 			@Override
 			public void onClick() {
 
 			}
-
-			@Override
-			public void onHover() {
-
-			}
 		};
-		MenuItem menuItem3 = new IconMenuItem("textures_enemy_slime_r_2") {
+		MenuItem menuItem3 = new IconMenuItem("textures_symbol_delete", mainToolBar) {
 			@Override
 			public void onClick() {
 
 			}
-
-			@Override
-			public void onHover() {
-
-			}
 		};
-		menuRow.addMenuItem(menuItem1);
-		menuRow.addMenuItem(menuItem2);
-		menuRow.addMenuItem(menuItem3);
-
-		return menuRow;
+		mainToolBar.addMenuItem(menuItem1);
+		mainToolBar.addMenuItem(menuItem2);
+		mainToolBar.addMenuItem(menuItem3);
 	}
 
-	private MenuRow createBuildingToolBar() {
-		MenuRow menuRow = new MenuRow(mainToolBar);
-		menuRow.setX(mainToolBar.x - 2*mainToolBar.getWidth()/6);
+	private void createBuildingToolBar() {
+		buildingToolBar.setX(mainToolBar.x - 2*mainToolBar.getWidth()/6);
 		for (TowerType type: TowerType.values()) {
-			MenuItem item = new IconMenuItem(type.getSprite().getTexture(0, 0)) {
+			MenuItem item = new IconMenuItem(type.getSprite().getTexture(0, 0), mainToolBar, buildingToolBar) {
+
 				@Override
 				public void onClick() {
 
 				}
-
-				@Override
-				public void onHover() {
-
-				}
 			};
 
-			menuRow.addMenuItem(item);
+			buildingToolBar.addMenuItem(item);
 		}
-
-		return menuRow;
 	}
 
 	@Override
@@ -105,7 +87,38 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 	@Override
 	public void update(Game game) {
+		MenuRow mouseRow = getMousedMenuRow(mousePositionX, mousePositionY);
+
+		if (mouseRow == null) {
+			menuRows = Arrays.asList(mainToolBar);
+		} else {
+			MenuItem item = mouseRow.getMenuItem(mousePositionX);
+			menuRows = item.getMenuRows();
+		}
+
 		for (MenuRow menuRow: menuRows) menuRow.update();
+	}
+
+	public boolean setMousePosition(float x, float y) {
+		this.mousePositionX = x;
+		this.mousePositionY = y;
+		return getMousedMenuRow(x, y) != null;
+	}
+
+	public void setMouseClicked(boolean b) {
+		mouseClicked = b;
+	}
+
+	private MenuRow getMousedMenuRow(float x, float y) {
+		float ty = 1;
+		for (MenuRow menuRow: menuRows) {
+			ty -= menuRow.getHeight();
+			if (y > ty + menuRow.getHeight() || y < ty) continue;
+
+			float w = menuRow.getWidth();
+			if (x >= (menuRow.x - w/2)/game.getWindow().getAspectRatio() && x <= (menuRow.x + w/2)/ (game.getWindow().getAspectRatio())) return menuRow;
+		}
+		return null;
 	}
 
 	@Override
@@ -134,27 +147,29 @@ public class Menu extends AbstractGameObject implements Drawable {
 		private List<MenuItem> items;
 		private MenuRow parent;
 		private float x;
-		public MenuRow(MenuRow parent) {
+		private float height;
+		public MenuRow(MenuRow parent, float height) {
 			items = new ArrayList<>();
 			this.parent = parent;
 			this.x = 0;
+			this.height = height;
 		}
 		void setX(float x) {
 			this.x = x;
 		}
 
 		void draw(Window window, BasicShader shader1, ColorShader shader2, float y) {
-			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), 0x9e/255f, 0x44/255f, 0x91/255f, 0.75f);
+			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), 0x63/255f, 0x36/255f, 0x62/255f, 1);
 
 			float x2 = (x - getWidth()/2);
 			for (MenuItem item: items) {
-				item.draw(window, shader1, shader2, x2, y);
+				item.draw(window, shader1, shader2, x2, y, getHeight());
 				x2 += item.getWidth();
 			}
 		}
 
 		float getHeight() {
-			return 0.1f;
+			return height;
 		}
 
 		float getWidth() {
@@ -167,12 +182,14 @@ public class Menu extends AbstractGameObject implements Drawable {
 			items.add(menuItem);
 		}
 
-		void onClick() {
+		MenuItem getMenuItem(float x) {
+			float x2 = this.x - getWidth()/2;
+			for (MenuItem item: items) {
+				if ((x2)/game.getWindow().getAspectRatio() <= x && (x2 + item.getWidth())/game.getWindow().getAspectRatio() >= x) return item;
+				x2 += item.getWidth();
+			}
 
-		}
-
-		void onHover() {
-
+			return null;
 		}
 
 		void update() {
@@ -184,31 +201,41 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 
 	interface MenuItem {
-		void draw(Window window, BasicShader shader1, ColorShader shader2, float x, float y);
+		void draw(Window window, BasicShader shader1, ColorShader shader2, float x, float y, float height);
 		float getWidth();
 		void onClick();
-		void onHover();
+		List<MenuRow> getMenuRows();
 	}
 
 	abstract class IconMenuItem implements MenuItem {
-
+		private List<MenuRow> menuRowList;
 		private Rectangle r;
-		public IconMenuItem(String textureName) {
+
+		public IconMenuItem(String textureName, MenuRow... menuRows) {
 			this.r = TextureHandler.getSpriteSheetBounds(textureName);
+
+			menuRowList = Arrays.asList(menuRows);
 		}
 
-		public IconMenuItem(Rectangle r) {
+		public IconMenuItem(Rectangle r, MenuRow... menuRows) {
 			this.r = r;
+
+			menuRowList = Arrays.asList(menuRows);
 		}
 
 		@Override
-		public void draw(Window window, BasicShader shader1, ColorShader shader2, float x, float y) {
-			shader1.draw(x / window.getAspectRatio(), y-0.1f, 0.1f / window.getAspectRatio(), 0.1f, r.x, r.y, r.width, r.height, false);
+		public void draw(Window window, BasicShader shader1, ColorShader shader2, float x, float y, float height) {
+			shader1.draw(x / window.getAspectRatio(), y-height, 0.1f / window.getAspectRatio(), height, r.x, r.y, r.width, r.height, false);
 		}
 
 		@Override
 		public float getWidth() {
 			return 0.1f;
+		}
+
+		@Override
+		public List<MenuRow> getMenuRows() {
+			return menuRowList;
 		}
 	}
 }
