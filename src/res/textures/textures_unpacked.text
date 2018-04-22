@@ -1,4 +1,4 @@
-115
+129
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -23,6 +23,10 @@ tower_volto_7 144 64 16 32
 tower_volto_8 160 64 16 32
 tower_volto_9 176 64 16 32
 tower_volto_10 192 64 16 32
+tower_bomb_0 80 96 16 32
+tower_bomb_1 96 96 16 32
+tower_bomb_2 112 96 16 32
+tower_bomb_3 128 96 16 32
 enemy_slime_r 66 35 12 11
 enemy_slime_g 66 19 12 11
 enemy_slime_b 66 3 12 11
@@ -113,4 +117,14 @@ particle_slime_g_big 80 166 2 2
 particle_slime_g 80 169 1 1
 particle_slime_b_big 77 166 2 2
 particle_slime_b 66 169 1 1
+particle_bomb 64 174 8 12
+particle_explosion_0 208 184 24 24
+particle_explosion_1 232 184 24 24
+particle_explosion_2 184 208 24 24
+particle_explosion_3 208 208 24 24
+particle_explosion_4 232 208 24 24
+particle_explosion_5 184 232 24 24
+particle_explosion_6 208 232 24 24
+particle_explosion_7 232 232 24 24
 selection 0 192 32 32
+range_circle 176 96 80 80
