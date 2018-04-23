@@ -61,7 +61,7 @@ public class Wave {
 		if(state == 1 || state == 2) {
 			if(state == 2) secondLine.setText("Spacebar to jump");
 			else secondLine.setText("");
-			waveDisplay.setText("Enemies left " + Math.abs((greenSlimes() + blueSlimes() + redSlimes() - enemiesKilled)));
+			waveDisplay.setText("Enemies left " + Math.abs(game.getEnemies().size() - currentBs - currentRs - currentGs + greenSlimes() + blueSlimes() + redSlimes() - enemiesKilled));
 		}
 
 		//SPAWNING
