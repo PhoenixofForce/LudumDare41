@@ -23,7 +23,7 @@ public class Wave {
 
 	private int currentGs = -1, currentRs = -1, currentBs = -1;
 	private int lastTickSpawned_R, lastTickSpawned_G, lastTickSpawned_B;
-	private int enemiesKilled = 0;
+	private int enemiesKilled = 0, lastSpaceTick = 0;
 
 	private Text waveDisplay, secondLine;
 
@@ -48,10 +48,10 @@ public class Wave {
 			currentRs = 0;
 
 			enemiesKilled = 0;
-
 			state = 1;
 
 			if(skipToNext) game.getMaterial(Material.GOLD).add((int)((wave != 1? SECONDS_BETWEENROUNDS: FIRST_WAVE_TIME)-(TimeUtil.getTime()-waveEnded)/1000));
+			skipToNext = false;
 			//for(Material m: Material.values()) game.getMaterial(m).add(50);		//FOR TESTING
 		} else {
 			waveDisplay.setText("Wave " + wave + " in " + Math.max(0, ((wave != 1? SECONDS_BETWEENROUNDS: FIRST_WAVE_TIME)-(TimeUtil.getTime()-waveEnded)/1000)));
@@ -59,8 +59,9 @@ public class Wave {
 		}
 
 		if(state == 1 || state == 2) {
-			waveDisplay.setText("Wave " + (wave+1) + " in " + Math.max((SECONDS_UNTIL_NEXT-(TimeUtil.getTime()-waveEnded)/1000), 0));
-			secondLine.setText("Enemies left " + Math.abs((greenSlimes() + blueSlimes() + redSlimes() - enemiesKilled)));
+			if(state == 2) secondLine.setText("Spacebar to jump");
+			else secondLine.setText("");
+			waveDisplay.setText("Enemies left " + Math.abs((greenSlimes() + blueSlimes() + redSlimes() - enemiesKilled)));
 		}
 
 		//SPAWNING
@@ -85,8 +86,7 @@ public class Wave {
 		}
 		if(state == 1 && blueSlimes() == currentBs && redSlimes() == currentRs && greenSlimes() == currentGs) state = 2;
 
-		//Probably removing first condition
-		if((waveEnded <= TimeUtil.getTime() - (1000L*SECONDS_UNTIL_NEXT) || game.getEnemies().size() == 0) && state == 2) {
+		if((skipToNext || game.getEnemies().size() == 0) && state == 2) {
 			state = 0;
 			skipToNext = false;
 			wave++;
@@ -95,7 +95,10 @@ public class Wave {
 	}
 
 	public void nextWave() {
-		if(state == 0) skipToNext = true;
+		if((state == 0 || state == 2) && game.getGameTick()-20 >= lastSpaceTick) {
+			skipToNext = true;
+			lastSpaceTick = game.getGameTick();
+		}
 	}
 
 	public void enemyKilled() {
