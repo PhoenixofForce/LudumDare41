@@ -306,10 +306,12 @@ public class Game {
 		}
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && selectedTower != null && !mouseConsumed) {
+			double factor = Math.pow(1.15, getTowerCount(selectedTower));
+
 			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
-			} else if (Math.round(selectedTower.getStoneCosts() * (1 + 1.15f * getTowerCount(selectedTower))) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * (1 + 1.15f * getTowerCount(selectedTower))) > materials.get(Material.WOOD).getAmount() || selectedTower.getGoldCosts() > materials.get(Material.GOLD).getAmount()) {
+			} else if (Math.round(selectedTower.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedTower.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount()) {
 				createErrorText("Not enough materials");
 				getCamera().addScreenshake(0.02f);
 			} else {
@@ -317,9 +319,9 @@ public class Game {
 				path.addTower(mouseFieldX, mouseFieldY, tower);
 				this.addGameObject(tower);
 
-				materials.get(Material.GOLD).remove(Math.round(selectedTower.getGoldCosts() * (1 + 1.15f * getTowerCount(selectedTower))));
-				materials.get(Material.WOOD).remove(Math.round(selectedTower.getWoodCosts() * (1 + 1.15f * getTowerCount(selectedTower))));
-				materials.get(Material.STONE).remove(Math.round(selectedTower.getStoneCosts() * (1 + 1.15f * getTowerCount(selectedTower))));
+				materials.get(Material.GOLD).remove((int) Math.round(selectedTower.getGoldCosts() * factor));
+				materials.get(Material.WOOD).remove((int) Math.round(selectedTower.getWoodCosts() * factor));
+				materials.get(Material.STONE).remove((int) Math.round(selectedTower.getStoneCosts() * factor));
 			}
 		}
 
