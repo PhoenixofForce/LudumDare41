@@ -308,7 +308,7 @@ public class Game {
 	public void gameLoop() {
 		long time;
 
-		while (window.isRunning() /*&& castle.getHealth() != 0*/) {
+		while (window.isRunning() && castle.getHealth() > 0) {
 			gameTick++;
 			time = TimeUtil.getTime();
 
@@ -360,6 +360,8 @@ public class Game {
 		}
 
 		cleanUp();
+
+		if (castle.getHealth() <= 0) new Thread(() -> Main.main(null)).start();
 	}
 
 	private void handleInput() {
