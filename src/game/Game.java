@@ -282,9 +282,9 @@ public class Game {
 				getCamera().addScreenshake(0.01f);
 				particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
 
-				materials.get(Material.GOLD).add(tower.getType().getGoldCosts()/2);
-				materials.get(Material.STONE).add(tower.getType().getStoneCosts()/2);
-				materials.get(Material.WOOD).add(tower.getType().getWoodCosts()/2);
+				materials.get(Material.GOLD).add(Math.round(tower.getType().getGoldCosts() * (0.5f + 1.15f * getTowerCount(selectedTower) /2.0f)));
+				materials.get(Material.STONE).add(Math.round(tower.getType().getStoneCosts() * (0.5f + 1.15f * getTowerCount(selectedTower) /2.0f)));
+				materials.get(Material.WOOD).add(Math.round(tower.getType().getWoodCosts() * (0.5f + 1.15f * getTowerCount(selectedTower) /2.0f)));
 
 				int gt = getGameTick();
 				this.addGameObject(new BasicDrawingEntity(new HitBox(mouseFieldX, mouseFieldY, 1, 2), 0) {
@@ -317,9 +317,9 @@ public class Game {
 				path.addTower(mouseFieldX, mouseFieldY, tower);
 				this.addGameObject(tower);
 
-				materials.get(Material.GOLD).remove(selectedTower.getGoldCosts());
-				materials.get(Material.WOOD).remove(selectedTower.getWoodCosts());
-				materials.get(Material.STONE).remove(selectedTower.getStoneCosts());
+				materials.get(Material.GOLD).remove(Math.round(selectedTower.getGoldCosts() * (1 + 1.15f * getTowerCount(selectedTower))));
+				materials.get(Material.WOOD).remove(Math.round(selectedTower.getWoodCosts() * (1 + 1.15f * getTowerCount(selectedTower))));
+				materials.get(Material.STONE).remove(Math.round(selectedTower.getStoneCosts() * (1 + 1.15f * getTowerCount(selectedTower))));
 			}
 		}
 
@@ -410,5 +410,19 @@ public class Game {
 	public void setDestroyTowers() {
 		this.destroyTowers = !destroyTowers;
 		selectedTower = null;
+	}
+
+	public int getTowerCount(TowerType t) {
+		int c = 0;
+
+		for(GameObject go: gameObjects) {
+			if(!toRemove.contains(go)) {
+				if(go instanceof  Tower) {
+					if(((Tower) go).getType() == t) c++;
+				}
+			}
+		}
+
+		return c;
 	}
 }

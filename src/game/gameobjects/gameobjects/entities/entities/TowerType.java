@@ -11,7 +11,6 @@ public enum TowerType {
 	VOLT(3, 2, 4, 10, 40, 50, 0.75f, Effects.PARALYSED, ParticleType.THUNDER, 100, "tower_volto_0", "tower_volto_1", "tower_volto_2", "tower_volto_2", "tower_volto_3", "tower_volto_3", "tower_volto_4", "tower_volto_5", "tower_volto_6", "tower_volto_7", "tower_volto_8", "tower_volto_9", "tower_volto_10"),
 	BOMB(2, 4, 18, 50, 100, 200, 1.5f, Effects.BURNING, ParticleType.BOMB, 100, "tower_bomb_0", "tower_bomb_1", "tower_bomb_2", "tower_bomb_3");
 
-
 	private float range, speed, damage;
 	private int woodCosts, stoneCosts, goldCosts;
 	private float damageRange;
