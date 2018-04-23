@@ -18,7 +18,7 @@ public class GameMaterial extends AbstractGameObject {
 		this.amount = 500;
 		this.displayAmount = 0;
 		this.material = Material.values()[i];
-		this.displayText = new Text(-0.99f, 0.95f - i*0.0625f, -100, "<"+material.toString().toLowerCase() +"> 0", 0.04f, false, 0f, 0f, Color.WHITE);
+		this.displayText = new Text(-0.99f, 0.99f - i*0.0625f, -100, "<"+material.toString().toLowerCase() +"> 0", 0.04f, false, 0f, 1f, Color.WHITE);
 
 		speed = 1;
 		remainder = 0;

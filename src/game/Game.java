@@ -26,8 +26,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Game {
-	private static final float TOWER_FACTOR = 1.15f;
-	private static final float BUILDING_FACTOR = 1.075f;
+	public static final float TOWER_FACTOR = 1.15f;
+	public static final float BUILDING_FACTOR = 1.075f;
 
 	private Window window;                            //displays the game
 
@@ -55,6 +55,9 @@ public class Game {
 	private Castle castle;
 	private Wave wave;
 
+	public Text textGold, textWood, textStone, textInfo;
+	public int whoDidThis;
+
 	/**
 	 * update the Keyboard and Controller Inputs
 	 **/
@@ -77,7 +80,7 @@ public class Game {
 		path = new Path(this, 32, 18);
 		this.addGameObject(new CameraController(this));
 
-		castle = new Castle(-1, path.getHeight()/2);
+		castle = new Castle(-1, path.getHeight() / 2);
 		this.addGameObject(castle);
 
 		wave = new Wave(this);
@@ -102,6 +105,42 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
+				if (destroyTowers && !mouseConsumed) {
+
+					if (path.getBuilding(mouseFieldX, mouseFieldY) != null) {
+						BuildingType b = path.getBuilding(mouseFieldX, mouseFieldY).getType();
+						float factor = (float) Math.pow(BUILDING_FACTOR, getBuildingCount(b)-1);
+
+						textGold.setText("<gold> " + Math.round(factor * b.getGoldCosts()));
+						textGold.setColor(Color.GREEN);
+						textWood.setText("<wood> " + Math.round(factor * b.getWoodCosts()));
+						textWood.setColor(Color.GREEN);
+						textStone.setText("<stone> " + Math.round(factor * b.getStoneCosts()));
+						textStone.setColor(Color.GREEN);
+						textInfo.setText("Destroys this building");
+						textInfo.setColor(Color.WHITE);
+
+						whoDidThis = 235615;
+					} else if (path.getTower(mouseFieldX, mouseFieldY) != null) {
+						TowerType b = path.getTower(mouseFieldX, mouseFieldY).getType();
+						float factor = (float) Math.pow(TOWER_FACTOR, getTowerCount(b)-1);
+
+						textGold.setText("<gold> " + Math.round(0.5f*factor * b.getGoldCosts()));
+						textGold.setColor(Color.GREEN);
+						textWood.setText("<wood> " + Math.round(0.5f*factor * b.getWoodCosts()));
+						textWood.setColor(Color.GREEN);
+						textStone.setText("<stone> " + Math.round(0.5f*factor * b.getStoneCosts()));
+						textStone.setColor(Color.GREEN);
+						textInfo.setText("Destroys this building");
+						textInfo.setColor(Color.WHITE);
+						whoDidThis = 235615;
+					} else if (whoDidThis == 235615) {
+						removeToolTip();
+					}
+				} else if (whoDidThis == 235615) {
+					removeToolTip();
+				}
+
 				if (destroyTowers && !mouseConsumed) {
 					hitBox.x = mouseFieldX;
 					hitBox.y = mouseFieldY;
@@ -206,11 +245,29 @@ public class Game {
 			materials.put(Material.values()[i], m);
 		}
 
+		textGold = new Text(-0.99f, 0, -1000, "", 0.04f, false, 0f, 1f, Color.WHITE);
+		textWood = new Text(-0.99f, -0.0625f, -1000, "", 0.04f, false, 0f, 1f, Color.WHITE);
+		textStone = new Text(-0.99f, -2 * 0.0625f, -1000, "", 0.04f, false, 0f, 1f, Color.WHITE);
+		textInfo = new Text(-0.99f, -3 * 0.0625f, -1000, "", 0.04f, false, 0f, 1f, Color.WHITE);
+		whoDidThis = -1;
+
+		this.addGameObject(textGold);
+		this.addGameObject(textWood);
+		this.addGameObject(textStone);
+		this.addGameObject(textInfo);
+
 		this.menu = new Menu();
 		this.addGameObject(menu);
 
 		this.click = new ClickBar(this);
 		this.addGameObject(click);
+	}
+
+	public void removeToolTip() {
+		textGold.setText("");
+		textInfo.setText("");
+		textStone.setText("");
+		textWood.setText("");
 	}
 
 	/**
@@ -266,7 +323,7 @@ public class Game {
 			TimeUtil.sleep((int) (1000.0f / Constants.TPS - (newTime - time)));
 		}
 
-		if(castle.getHealth() == 0) {
+		if (castle.getHealth() == 0) {
 			//TODO: Restart
 		}
 
@@ -287,7 +344,7 @@ public class Game {
 		mouseConsumed = menu.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight() - 1);
 		menu.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
-		mouseConsumed |= click.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight()-1);
+		mouseConsumed |= click.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight() - 1);
 		click.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
 		if (keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
@@ -311,12 +368,12 @@ public class Game {
 					path.removeBuilding(mouseFieldX, mouseFieldY);
 
 					getCamera().addScreenshake(0.01f);
-					particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
+					particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX + 0.5f, mouseFieldY + 0.5f, 0, 0);
 
 					double factor = Math.pow(BUILDING_FACTOR, getBuildingCount(selectedBuilding));
-					materials.get(Material.GOLD).add((int) Math.round(Building.getType().getGoldCosts() * factor/2));
-					materials.get(Material.STONE).add((int) Math.round(Building.getType().getStoneCosts() * factor/2));
-					materials.get(Material.WOOD).add((int) Math.round(Building.getType().getWoodCosts() * factor/2));
+					materials.get(Material.GOLD).add((int) Math.round(Building.getType().getGoldCosts() * factor / 2));
+					materials.get(Material.STONE).add((int) Math.round(Building.getType().getStoneCosts() * factor / 2));
+					materials.get(Material.WOOD).add((int) Math.round(Building.getType().getWoodCosts() * factor / 2));
 
 					int gt = getGameTick();
 					this.addGameObject(new BasicDrawingEntity(new HitBox(mouseFieldX, mouseFieldY, 1, 2), 0) {
@@ -330,8 +387,9 @@ public class Game {
 
 						@Override
 						public void update(Game game) {
-							setColor(new float[] {0, 0, 0, 1-1.0f*(game.getGameTick()-gt)/(ParticleType.EXPLOSION.getLifeTime())});
-							if (game.getGameTick() >= gt + (ParticleType.EXPLOSION.getLifeTime())) removeGameObject(this);
+							setColor(new float[]{0, 0, 0, 1 - 1.0f * (game.getGameTick() - gt) / (ParticleType.EXPLOSION.getLifeTime())});
+							if (game.getGameTick() >= gt + (ParticleType.EXPLOSION.getLifeTime()))
+								removeGameObject(this);
 						}
 					});
 				}
@@ -339,14 +397,14 @@ public class Game {
 				Tower tower = path.getTower(mouseFieldX, mouseFieldY);
 				this.removeGameObject(tower);
 				path.removeTower(mouseFieldX, mouseFieldY);
+				double factor = Math.pow(TOWER_FACTOR, getTowerCount(tower.getType()));
+				materials.get(Material.GOLD).add((int) Math.round(tower.getType().getGoldCosts() * factor / 2));
+				materials.get(Material.STONE).add((int) Math.round(tower.getType().getStoneCosts() * factor / 2));
+				materials.get(Material.WOOD).add((int) Math.round(tower.getType().getWoodCosts() * factor / 2));
 
 				getCamera().addScreenshake(0.01f);
-				particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
+				particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX + 0.5f, mouseFieldY + 0.5f, 0, 0);
 
-				double factor = Math.pow(TOWER_FACTOR, getTowerCount(selectedTower));
-				materials.get(Material.GOLD).add((int) Math.round(tower.getType().getGoldCosts() * factor/2));
-				materials.get(Material.STONE).add((int) Math.round(tower.getType().getStoneCosts() * factor/2));
-				materials.get(Material.WOOD).add((int) Math.round(tower.getType().getWoodCosts() * factor/2));
 
 				int gt = getGameTick();
 				this.addGameObject(new BasicDrawingEntity(new HitBox(mouseFieldX, mouseFieldY, 1, 2), 0) {
@@ -360,7 +418,7 @@ public class Game {
 
 					@Override
 					public void update(Game game) {
-						setColor(new float[] {0, 0, 0, 1-1.0f*(game.getGameTick()-gt)/(ParticleType.EXPLOSION.getLifeTime())});
+						setColor(new float[]{0, 0, 0, 1 - 1.0f * (game.getGameTick() - gt) / (ParticleType.EXPLOSION.getLifeTime())});
 						if (game.getGameTick() >= gt + (ParticleType.EXPLOSION.getLifeTime())) removeGameObject(this);
 					}
 				});
@@ -373,11 +431,11 @@ public class Game {
 			if (mouseFieldX >= ((selectedBuilding != null && selectedBuilding == BuildingType.MILL)? path.getWidth()-1:  path.getWidth()) || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
-			} else if ((selectedBuilding != null && (Math.round(selectedBuilding.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedBuilding.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedBuilding.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount())) || (selectedTower != null && (Math.round(selectedTower.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedTower.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount()))) {
+			} else if ((selectedBuilding != null && (Math.round(selectedBuilding.getStoneCosts() * factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedBuilding.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedBuilding.getGoldCosts() * factor) > materials.get(Material.GOLD).getAmount())) || (selectedTower != null && (Math.round(selectedTower.getStoneCosts() * factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedTower.getGoldCosts() * factor) > materials.get(Material.GOLD).getAmount()))) {
 				createErrorText("Not enough materials");
 				getCamera().addScreenshake(0.02f);
 			} else {
-				if(selectedTower != null) {
+				if (selectedTower != null) {
 					Tower tower = new Tower(selectedTower, mouseFieldX, mouseFieldY);
 					path.addTower(mouseFieldX, mouseFieldY, tower);
 					this.addGameObject(tower);
@@ -497,10 +555,10 @@ public class Game {
 	public int getTowerCount(TowerType t) {
 		int c = 0;
 
-		for(GameObject go: gameObjects) {
-			if(!toRemove.contains(go)) {
-				if(go instanceof  Tower) {
-					if(((Tower) go).getType() == t) c++;
+		for (GameObject go : gameObjects) {
+			if (!toRemove.contains(go)) {
+				if (go instanceof Tower) {
+					if (((Tower) go).getType() == t) c++;
 				}
 			}
 		}

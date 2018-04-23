@@ -2,6 +2,8 @@ package game.gameobjects.gameobjects;
 
 import game.Game;
 import game.gameobjects.AbstractGameObject;
+import game.gameobjects.Material;
+import game.gameobjects.gameobjects.entities.entities.Building;
 import game.gameobjects.gameobjects.entities.entities.BuildingType;
 import game.gameobjects.gameobjects.entities.entities.TowerType;
 import game.util.TextureHandler;
@@ -80,6 +82,11 @@ public class Menu extends AbstractGameObject implements Drawable {
 					menuRows = Arrays.asList(mainToolBar);
 					game.setSelectedTower(type);
 				}
+
+				@Override
+				public TowerType get1() {
+					return type;
+				}
 			};
 
 			buildingToolBar.addMenuItem(item);
@@ -95,6 +102,11 @@ public class Menu extends AbstractGameObject implements Drawable {
 				public void onClick() {
 					menuRows = Arrays.asList(mainToolBar);
 					game.setSelectedBuilding(type);
+				}
+
+				@Override
+				public BuildingType get2() {
+					return type;
 				}
 			};
 
@@ -119,12 +131,48 @@ public class Menu extends AbstractGameObject implements Drawable {
 		if (mouseRow == null) {
 			hightlighted = null;
 			menuRows = Arrays.asList(mainToolBar);
+
+			if (game.whoDidThis == 37525423) {
+				game.removeToolTip();
+			}
 		} else {
 			hightlighted = mouseRow.getMenuItem(mousePositionX, mousePositionY);
 			if (hightlighted == null) {
 				menuRows = Arrays.asList(mainToolBar);
 			} else {
 				menuRows = hightlighted.getMenuRows();
+
+				if (hightlighted.get1() != null) {
+					TowerType b = hightlighted.get1();
+
+					float factor = (float) Math.pow(Game.TOWER_FACTOR, game.getTowerCount(b));
+					game.textGold.setText("<gold> " + Math.round(factor * b.getGoldCosts()));
+					game.textGold.setColor(game.getMaterial(Material.GOLD).getAmount() >= Math.round(factor * b.getGoldCosts()) ? Color.WHITE : Color.RED);
+					game.textWood.setText("<wood> " + Math.round(factor * b.getWoodCosts()));
+					game.textWood.setColor(game.getMaterial(Material.WOOD).getAmount() >= Math.round(factor * b.getWoodCosts()) ? Color.WHITE : Color.RED);
+					game.textStone.setText("<stone> " + Math.round(factor * b.getStoneCosts()));
+					game.textStone.setColor(game.getMaterial(Material.STONE).getAmount() >= Math.round(factor * b.getStoneCosts()) ? Color.WHITE : Color.RED);
+					game.textInfo.setText("Builds a new " + b.name() + " tower");
+					game.textInfo.setColor(Color.WHITE);
+
+					game.whoDidThis = 37525423;
+				} else if (hightlighted.get2() != null) {
+					BuildingType b = hightlighted.get2();
+
+					float factor = (float) Math.pow(Game.BUILDING_FACTOR, game.getBuildingCount(b));
+					game.textGold.setText("<gold> " + Math.round(factor * b.getGoldCosts()));
+					game.textGold.setColor(game.getMaterial(Material.GOLD).getAmount() >= Math.round(factor * b.getGoldCosts()) ? Color.WHITE : Color.RED);
+					game.textWood.setText("<wood> " + Math.round(factor * b.getWoodCosts()));
+					game.textWood.setColor(game.getMaterial(Material.WOOD).getAmount() >= Math.round(factor * b.getWoodCosts()) ? Color.WHITE : Color.RED);
+					game.textStone.setText("<stone> " + Math.round(factor * b.getStoneCosts()));
+					game.textStone.setColor(game.getMaterial(Material.STONE).getAmount() >= Math.round(factor * b.getStoneCosts()) ? Color.WHITE : Color.RED);
+					game.textInfo.setText("Builds a new " + b.name() + " building");
+					game.textInfo.setColor(Color.WHITE);
+
+					game.whoDidThis = 37525423;
+				} else if (game.whoDidThis == 37525423) {
+					game.removeToolTip();
+				}
 
 				if (mouseClicked) hightlighted.onClick();
 			}
@@ -243,6 +291,8 @@ public class Menu extends AbstractGameObject implements Drawable {
 		float getWidth();
 		void onClick();
 		List<MenuRow> getMenuRows();
+		default TowerType get1() {return null;}
+		default BuildingType get2() {return null;}
 	}
 
 	abstract class IconMenuItem implements MenuItem {

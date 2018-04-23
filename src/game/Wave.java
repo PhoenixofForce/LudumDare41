@@ -32,8 +32,8 @@ public class Wave {
 		wave = 1;
 		waveEnded = TimeUtil.getTime();
 
-		waveDisplay = new Text(0.95f, 0.95f, -100, "Next Wave in " + SECONDS_BETWEENROUNDS, 0.04f, false, 1f, 1f, Color.WHITE);
-		secondLine = new Text(0.95f, 0.9f, -100, "Spacebar to jump", 0.04f, false, 1f, 1f, Color.WHITE);
+		waveDisplay = new Text(0.99f, 0.99f, -100, "Next Wave in " + SECONDS_BETWEENROUNDS, 0.04f, false, 1f, 1f, Color.WHITE);
+		secondLine = new Text(0.99f, 0.99f - 0.0625f, -100, "Spacebar to jump", 0.04f, false, 1f, 1f, Color.WHITE);
 		game.addGameObject(waveDisplay);
 		game.addGameObject(secondLine);
 
