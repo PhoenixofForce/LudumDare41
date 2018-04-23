@@ -15,7 +15,7 @@ public class Castle extends BasicStaticEntity {
 
 	public Castle(float x, float y) {
 		super(new HitBox(x, y, 1, 2), y);
-		this.health = 1;
+		this.health = 100;
 		this.setSprite(new Sprite(100, "building_castle"));
 	}
 

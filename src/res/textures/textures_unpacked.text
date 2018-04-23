@@ -1,4 +1,4 @@
-165
+172
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -164,3 +164,10 @@ building_castle 176 0 16 32
 symbol_build 32 176 16 16
 symbol_upgrade 16 176 16 16
 symbol_delete 0 176 16 16
+building_mine 192 0 16 32
+particle_1 54 187 6 5
+particle_10 54 193 10 5
+particle_100 54 199 14 5
+particle_1000 54 205 18 5
+particle_10000 54 211 22 5
+particle_100000 54 217 26 5
