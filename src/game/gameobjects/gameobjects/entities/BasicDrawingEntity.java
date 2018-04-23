@@ -1,6 +1,5 @@
 package game.gameobjects.gameobjects.entities;
 
-import game.Constants;
 import game.data.Sprite;
 import game.data.hitbox.HitBox;
 import game.gameobjects.AbstractGameObject;
@@ -19,7 +18,7 @@ import java.awt.*;
 public abstract class BasicDrawingEntity extends AbstractGameObject implements Drawable {
 	protected HitBox hitBox;
 	protected Sprite sprite;
-	protected Color color;
+	protected float[] color;
 	private boolean useCamera;
 
 	private float drawingPriority;
@@ -30,7 +29,7 @@ public abstract class BasicDrawingEntity extends AbstractGameObject implements D
 		this.hitBox = hitBox;
 		this.drawingPriority = drawingPriority;
 
-		color = Color.BLACK;
+		color = new float[] {0, 0, 0, 1};
 		useCamera = true;
 	}
 
@@ -49,7 +48,7 @@ public abstract class BasicDrawingEntity extends AbstractGameObject implements D
 
 		shader.start();
 		shader.setUseCamera(useCamera);
-		shader.setColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+		shader.setColor(color[0], color[1], color[2], color[3]);
 		shader.setTextureSheetBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 		if (useCamera) {
 			shader.setBounds(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
@@ -80,7 +79,7 @@ public abstract class BasicDrawingEntity extends AbstractGameObject implements D
 		this.startTime = TimeUtil.getTime();
 	}
 
-	public void setColor(Color color) {
+	public void setColor(float[] color) {
 		this.color = color;
 	}
 

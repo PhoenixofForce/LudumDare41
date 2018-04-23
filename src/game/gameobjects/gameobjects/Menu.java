@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Menu extends AbstractGameObject implements Drawable {
-	public static final float BORDER = 0.0625f;
+	public static final float BORDER = 0.042f;
 	public static final float SIZE = 0.1f;
 	public static final float[] NO_HIGHTLIGHT_COLOR = new float[]{0, 0, 0, 1};
 	public static final float[] HIGHTLIGHT_COLOR = new float[]{0.125f, 0.125f, 0.125f, 1};

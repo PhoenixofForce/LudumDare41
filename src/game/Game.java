@@ -22,19 +22,20 @@ import game.window.Window;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Game {
-	private Window window;							//displays the game
+	private Window window;                            //displays the game
 
-	private int gameTick;							//current tick of the game (starts at 0) -> 60 Ticks Per Second
+	private int gameTick;                            //current tick of the game (starts at 0) -> 60 Ticks Per Second
 
-	private List<GameObject> gameObjects;			//list of gameObjects, that are updated every tick
+	private List<GameObject> gameObjects;            //list of gameObjects, that are updated every tick
 
-	private Queue<GameObject> toRemove;				//list of gameObjects, that are removed next Tick
-	private Queue<GameObject> toAdd;				//list of gameObjects, that are added next Tick
+	private Queue<GameObject> toRemove;                //list of gameObjects, that are removed next Tick
+	private Queue<GameObject> toAdd;                //list of gameObjects, that are added next Tick
 
-	private ParticleSystem particleSystem;			//display and store all particles
+	private ParticleSystem particleSystem;            //display and store all particles
 	private CameraController cameraController;
 	private Menu menu;
 
@@ -42,10 +43,14 @@ public class Game {
 	private boolean mouseConsumed;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
-	private TowerType selectedTower = TowerType.ARCHER;
+	private TowerType selectedTower = null;
 	private Path path;
 
 	private Wave wave;
+	/**
+	 * update the Keyboard and Controller Inputs
+	 **/
+	private int lastMouseClickTick = 0;
 
 	public Game(Window window) {
 		this.window = window;
@@ -71,11 +76,11 @@ public class Game {
 		enemies = new ArrayList<>();
 
 		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), 5) {
+			private Tower mouseOverTower;
+
 			{
 				setSprite(new Sprite(100, "range_circle"));
 			}
-
-			private Tower mouseOverTower;
 
 			@Override
 			public float getPriority() {
@@ -84,15 +89,46 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
-				mouseOverTower = path.getTower(mouseFieldX, mouseFieldY);
-				if (mouseOverTower == null || mouseConsumed) {
-					hitBox.width = 0;
-					hitBox.height = 0;
+				if (selectedTower != null) {
+					hitBox.x = mouseFieldX + 0.5f - selectedTower.getRange();
+					hitBox.y = mouseFieldY + 0.5f - selectedTower.getRange();
+					hitBox.width = selectedTower.getRange() * 2;
+					hitBox.height = selectedTower.getRange() * 2;
 				} else {
-					hitBox.width = mouseOverTower.getType().getRange()*2;
-					hitBox.height = mouseOverTower.getType().getRange()*2;
-					hitBox.x = mouseOverTower.getHitBox().getCenterX() - mouseOverTower.getType().getRange();
-					hitBox.y = mouseOverTower.getHitBox().getCenterY() - mouseOverTower.getType().getRange() - 0.5f;
+					mouseOverTower = path.getTower(mouseFieldX, mouseFieldY);
+					if (mouseOverTower == null || mouseConsumed) {
+						hitBox.width = 0;
+						hitBox.height = 0;
+					} else {
+						hitBox.width = mouseOverTower.getType().getRange() * 2;
+						hitBox.height = mouseOverTower.getType().getRange() * 2;
+						hitBox.x = mouseOverTower.getHitBox().getCenterX() - mouseOverTower.getType().getRange();
+						hitBox.y = mouseOverTower.getHitBox().getCenterY() - mouseOverTower.getType().getRange() - 0.5f;
+					}
+				}
+			}
+		});
+
+		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 2), 3) {
+			{
+				setColor(new float[]{0, 0, 0, 0.5f});
+			}
+
+			@Override
+			public float getPriority() {
+				return 100;
+			}
+
+			@Override
+			public void update(Game game) {
+				if (selectedTower == null) {
+					hitBox.width = 0;
+				} else {
+					setSprite(selectedTower.getSprite());
+					hitBox.x = mouseFieldX;
+					hitBox.y = mouseFieldY;
+					hitBox.height = 2;
+					hitBox.width = 1;
 				}
 			}
 		});
@@ -101,6 +137,7 @@ public class Game {
 			{
 				setSprite(new Sprite(100, "selection"));
 			}
+
 			@Override
 			public float getPriority() {
 				return 100;
@@ -147,7 +184,7 @@ public class Game {
 				if (gameObject instanceof Drawable) window.removeDrawable((Drawable) gameObject);
 				if (gameObject instanceof ParticleSystem) particleSystem = null;
 				if (gameObject instanceof CameraController) cameraController = null;
-				if(gameObject instanceof Enemy) {
+				if (gameObject instanceof Enemy) {
 					wave.enemyKilled();
 					enemies.remove(gameObject);
 				}
@@ -185,28 +222,26 @@ public class Game {
 		cleanUp();
 	}
 
-	/**
-	 * update the Keyboard and Controller Inputs
-	 **/
-	private int lastMouseClickTick = 0;
 	private void handleInput() {
 		Keyboard keyboard = window.getKeyboard();
 
 		int a = keyboard.getScrollAmount();
 		cameraController.setScroll(a);
 
-		int[] curr = {keyboard.getMouseX(), window.getHeight()-keyboard.getMouseY()};
-		int[] last = {keyboard.getLastMouseX(), window.getHeight()-keyboard.getLastMouseY()};
-		mouseFieldX = (int) (getCamera().getX() + 2*(curr[0] - window.getWidth()/2) / getCamera().getZoom() / window.getHeight());
-		mouseFieldY = (int) (getCamera().getY() + 2*(curr[1] - window.getHeight()/2) / getCamera().getZoom() / window.getHeight());
+		int[] curr = {keyboard.getMouseX(), window.getHeight() - keyboard.getMouseY()};
+		int[] last = {keyboard.getLastMouseX(), window.getHeight() - keyboard.getLastMouseY()};
+		mouseFieldX = (int) (getCamera().getX() + 2 * (curr[0] - window.getWidth() / 2) / getCamera().getZoom() / window.getHeight());
+		mouseFieldY = (int) (getCamera().getY() + 2 * (curr[1] - window.getHeight() / 2) / getCamera().getZoom() / window.getHeight());
 
-		mouseConsumed = menu.setMousePosition(2.0f*curr[0]/window.getWidth() - 1, 2.0f*curr[1]/window.getHeight()-1);
-		menu.setMouseClicked((lastMouseClickTick +1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
+		mouseConsumed = menu.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight() - 1);
+		menu.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
-		if(keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
+		if (keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) selectedTower = null;
 
-		if (!mouseConsumed && keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
-		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick) && selectedTower != null && !mouseConsumed) {
+		if (!mouseConsumed && keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE))
+			cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && selectedTower != null && !mouseConsumed) {
 			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
@@ -221,6 +256,7 @@ public class Game {
 				materials.get(Material.GOLD).remove(selectedTower.getGoldCosts());
 				materials.get(Material.WOOD).remove(selectedTower.getWoodCosts());
 				materials.get(Material.STONE).remove(selectedTower.getStoneCosts());
+				selectedTower = null;
 			}
 		}
 
