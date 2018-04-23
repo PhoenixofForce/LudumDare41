@@ -40,7 +40,7 @@ public class Enemy extends BasicMovingEntity {
 	public void draw(Window window, long time) {
 		super.draw(window, time);
 
-		if (health != type.getHealth()) {
+		if (health != maxHealth) {
 			HealthBarShader shader = (HealthBarShader) window.getShaderHandler().getShader(ShaderType.HEALTH_BAR_SHADER);
 			shader.start();
 			shader.setUseCamera(true);
