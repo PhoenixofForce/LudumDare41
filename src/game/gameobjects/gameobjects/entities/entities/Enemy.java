@@ -1,6 +1,7 @@
 package game.gameobjects.gameobjects.entities.entities;
 
 import game.Game;
+import game.Wave;
 import game.data.hitbox.HitBox;
 import game.gameobjects.Effects;
 import game.gameobjects.Material;
@@ -18,14 +19,15 @@ public class Enemy extends BasicMovingEntity {
 
 	private EnemyType type;
 	private float position;
-	private int health;
+	private int health, maxHealth;
 
 	private Map<Effects, Integer> effectDurations;
 
-	public Enemy(EnemyType t) {
+	public Enemy(Wave wave, EnemyType t) {
 		super(new HitBox(0, 0, 1, 1), 0);
 
-		this.health = (int) t.getHealth();
+		this.health = (int) t.getHealth() + (wave.getWave()/5);
+		this.maxHealth = (int) t.getHealth() + (wave.getWave()/5);
 		this.type = t;
 		position = 0;
 
@@ -43,7 +45,7 @@ public class Enemy extends BasicMovingEntity {
 			shader.start();
 			shader.setUseCamera(true);
 			shader.setBounds(hitBox.x, hitBox.y, hitBox.width, 0.2f);
-			shader.setHealth(((float) health) / type.getHealth());
+			shader.setHealth(((float) health) / maxHealth);
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 		}
 	}

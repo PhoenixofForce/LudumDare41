@@ -2,6 +2,7 @@ package game;
 
 import game.data.hitbox.HitBox;
 import game.gameobjects.gameobjects.entities.entities.Building;
+import game.gameobjects.gameobjects.entities.entities.BuildingType;
 import game.gameobjects.gameobjects.entities.entities.Tower;
 import game.gameobjects.gameobjects.wall.Background;
 
@@ -93,9 +94,13 @@ public class Path {
 
 	public void addBuilding(int x, int y, Building t) {
 		buildings[x][y] = t;
+		if(t.getType() == BuildingType.MILL) buildings[x+1][y] = t;
 	}
 
 	public void removeBuilding(int x, int y) {
+		Building t = getBuilding(x, y);
+		if(t.equals(getBuilding(x+1, y))) buildings[x+1][y] = null;
+		if(t.equals(getBuilding(x-1, y))) buildings[x-1][y] = null;
 		buildings[x][y] = null;
 	}
 

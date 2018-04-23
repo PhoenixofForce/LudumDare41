@@ -26,6 +26,9 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Game {
+	private static final float TOWER_FACTOR = 1.15f;
+	private static final float BUILDING_FACTOR = 1.075f;
+
 	private Window window;                            //displays the game
 
 	private int gameTick;                            //current tick of the game (starts at 0) -> 60 Ticks Per Second
@@ -206,7 +209,7 @@ public class Game {
 		this.menu = new Menu();
 		this.addGameObject(menu);
 
-		this.click = new ClickBar();
+		this.click = new ClickBar(this);
 		this.addGameObject(click);
 	}
 
@@ -310,7 +313,7 @@ public class Game {
 					getCamera().addScreenshake(0.01f);
 					particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
 
-					double factor = Math.pow(1.075, getBuildingCount(selectedBuilding));
+					double factor = Math.pow(BUILDING_FACTOR, getBuildingCount(selectedBuilding));
 					materials.get(Material.GOLD).add((int) Math.round(Building.getType().getGoldCosts() * factor/2));
 					materials.get(Material.STONE).add((int) Math.round(Building.getType().getStoneCosts() * factor/2));
 					materials.get(Material.WOOD).add((int) Math.round(Building.getType().getWoodCosts() * factor/2));
@@ -340,7 +343,7 @@ public class Game {
 				getCamera().addScreenshake(0.01f);
 				particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
 
-				double factor = Math.pow(1.15, getTowerCount(selectedTower));
+				double factor = Math.pow(TOWER_FACTOR, getTowerCount(selectedTower));
 				materials.get(Material.GOLD).add((int) Math.round(tower.getType().getGoldCosts() * factor/2));
 				materials.get(Material.STONE).add((int) Math.round(tower.getType().getStoneCosts() * factor/2));
 				materials.get(Material.WOOD).add((int) Math.round(tower.getType().getWoodCosts() * factor/2));
@@ -365,9 +368,9 @@ public class Game {
 		}
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && (selectedTower != null || selectedBuilding != null) && !mouseConsumed) {
-			double factor = selectedTower != null? Math.pow(1.15, getTowerCount(selectedTower)): Math.pow(1.075, getBuildingCount(selectedBuilding));
+			double factor = selectedTower != null? Math.pow(TOWER_FACTOR, getTowerCount(selectedTower)): Math.pow(BUILDING_FACTOR, getBuildingCount(selectedBuilding));
 
-			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
+			if (mouseFieldX >= ((selectedBuilding != null && selectedBuilding == BuildingType.MILL)? path.getWidth()-1:  path.getWidth()) || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
 			} else if ((selectedBuilding != null && (Math.round(selectedBuilding.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedBuilding.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedBuilding.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount())) || (selectedTower != null && (Math.round(selectedTower.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedTower.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount()))) {

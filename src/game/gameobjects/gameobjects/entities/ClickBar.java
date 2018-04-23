@@ -3,6 +3,7 @@ package game.gameobjects.gameobjects.entities;
 import game.Game;
 import game.gameobjects.AbstractGameObject;
 import game.gameobjects.Material;
+import game.gameobjects.gameobjects.entities.entities.BuildingType;
 import game.gameobjects.gameobjects.particle.ParticleType;
 import game.util.TextureHandler;
 import game.window.Drawable;
@@ -30,10 +31,12 @@ public class ClickBar extends AbstractGameObject implements Drawable {
 	private boolean mouseClicked;
 
 	private MenuItem hightlighted;
+	private Game game;
 
-	public ClickBar() {
+	public ClickBar(Game game) {
 		menuRows = new ArrayList<>();
 
+		this.game = game;
 		createMainToolBar();
 
 		menuRows.add(mainToolBar);
@@ -45,13 +48,13 @@ public class ClickBar extends AbstractGameObject implements Drawable {
 		MenuItem menuItem1 = new IconMenuItem("textures_material_wood", mainToolBar) {
 			@Override
 			public void onClick() {
-				game.getMaterial(Material.WOOD).add(1);
+				game.getMaterial(Material.WOOD).add((int)Math.pow(2, game.getBuildingCount(BuildingType.MILL)));
 			}
 		};
 		MenuItem menuItem2 = new IconMenuItem("textures_material_stone", mainToolBar) {
 			@Override
 			public void onClick() {
-				game.getMaterial(Material.STONE).add(1);
+				game.getMaterial(Material.STONE).add((int)Math.pow(2, game.getBuildingCount(BuildingType.MILL)));
 			}
 		};
 

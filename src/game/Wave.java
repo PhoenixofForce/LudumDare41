@@ -66,19 +66,19 @@ public class Wave {
 		//SPAWNING
 		if(state == 1) {
 			if(currentRs < redSlimes() && game.getGameTick()-65 >= lastTickSpawned_R) {
-				game.addGameObject(new Enemy(EnemyType.RED_SLIME));
+				game.addGameObject(new Enemy(this, EnemyType.RED_SLIME));
 				currentRs++;
 				lastTickSpawned_R = game.getGameTick();
 			}
 
 			if(currentBs < blueSlimes() && game.getGameTick()-60 >= lastTickSpawned_B && currentRs >= Math.ceil(redSlimes()/2.0f)-wave/2.0f) {
-				game.addGameObject(new Enemy(EnemyType.BLUE_SLIME));
+				game.addGameObject(new Enemy(this, EnemyType.BLUE_SLIME));
 				currentBs++;
 				lastTickSpawned_B = game.getGameTick();
 			}
 
 			if(currentGs < greenSlimes() && game.getGameTick()-55 >= lastTickSpawned_G && currentBs >= Math.ceil(blueSlimes()/2.0f)-wave/2.0f) {
-				game.addGameObject(new Enemy(EnemyType.GREEN_SLIME));
+				game.addGameObject(new Enemy(this, EnemyType.GREEN_SLIME));
 				currentGs++;
 				lastTickSpawned_G = game.getGameTick();
 			}
@@ -118,5 +118,9 @@ public class Wave {
 		return Math.max(
 				Math.round(0.5f * (wave - 9))
 				, 0);
+	}
+
+	public int getWave() {
+		return wave;
 	}
 }

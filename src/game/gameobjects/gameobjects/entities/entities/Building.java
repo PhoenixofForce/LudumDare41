@@ -11,7 +11,7 @@ public class Building extends BasicStaticEntity {
 	private BuildingType type;
 
 	public Building(BuildingType t, float x, float y) {
-		super(new HitBox(x, y, 1, 2), y);
+		super(new HitBox(x, y, t == BuildingType.MILL? 2: 1, 2), y);
 		this.type = t;
 		setSprite(type.getSprite());
 	}
