@@ -4,9 +4,9 @@ import game.data.Sprite;
 
 public enum EnemyType {
 
-	BLUE_SLIME(1, 5, 15, 6, 100, "enemy_slime_b_0", "enemy_slime_b_1", "enemy_slime_b_2", "enemy_slime_b_1"),
-	RED_SLIME(0.75f, 3, 40, 14, 100, "enemy_slime_r_0", "enemy_slime_r_1", "enemy_slime_r_2", "enemy_slime_r_1"),
-	GREEN_SLIME(2.5f, 3, 10, 2, 100, "enemy_slime_g_0", "enemy_slime_g_1", "enemy_slime_g_2", "enemy_slime_g_1");
+	BLUE_SLIME(1, 5, 15, 12, 100, "enemy_slime_b_0", "enemy_slime_b_1", "enemy_slime_b_2", "enemy_slime_b_1"),
+	RED_SLIME(0.75f, 3, 40, 28, 100, "enemy_slime_r_0", "enemy_slime_r_1", "enemy_slime_r_2", "enemy_slime_r_1"),
+	GREEN_SLIME(2.5f, 3, 10, 4, 100, "enemy_slime_g_0", "enemy_slime_g_1", "enemy_slime_g_2", "enemy_slime_g_1");
 
 	private float speed, damage, health;
 	private int dropedGold;
