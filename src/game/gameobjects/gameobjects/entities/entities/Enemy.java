@@ -2,27 +2,34 @@ package game.gameobjects.gameobjects.entities.entities;
 
 import game.Game;
 import game.data.hitbox.HitBox;
+import game.gameobjects.Effects;
 import game.gameobjects.Material;
 import game.gameobjects.gameobjects.entities.BasicMovingEntity;
 import game.window.Window;
 import game.window.shader.ShaderType;
-import game.window.shader.shader.BasicShader;
 import game.window.shader.shader.HealthBarShader;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Enemy extends BasicMovingEntity{
+public class Enemy extends BasicMovingEntity {
 
 	private EnemyType type;
 	private float position;
 	private int health;
+
+	private Map<Effects, Integer> effectDurations;
+
 	public Enemy(EnemyType t) {
-		super(new HitBox(0, 0, 1,1), 0);
+		super(new HitBox(0, 0, 1, 1), 0);
 
 		this.health = (int) t.getHealth();
 		this.type = t;
 		position = 0;
+
+		effectDurations = new HashMap<>();
 
 		this.setSprite(t.getSprite());
 	}
@@ -31,7 +38,7 @@ public class Enemy extends BasicMovingEntity{
 	public void draw(Window window, long time) {
 		super.draw(window, time);
 
-		if(health != type.getHealth()) {
+		if (health != type.getHealth()) {
 			HealthBarShader shader = (HealthBarShader) window.getShaderHandler().getShader(ShaderType.HEALTH_BAR_SHADER);
 			shader.start();
 			shader.setUseCamera(true);
@@ -45,12 +52,21 @@ public class Enemy extends BasicMovingEntity{
 	public void update(Game game) {
 		super.update(game);
 
-		position += type.getSpeed()/60.0f;
+		for (Effects e : effectDurations.keySet()) {
+			if (game.getGameTick() % 60 == 0) effectDurations.put(e, effectDurations.get(e) - 1);
+			if (effectDurations.get(e) == 0) effectDurations.remove(e);
+			updateColor();
+		}
+
+		if (effectDurations.containsKey(Effects.BURNING))
+			if (game.getGameTick() % 30 == 0) damage((int) Effects.BURNING.getEffectOn(type));
+
+		position += (effectDurations.containsKey(Effects.PARALYSED) ? Effects.PARALYSED.getEffectOn(type) : 1) * type.getSpeed() / 60.0f;
 
 		float[] newPos = game.getPath().getPathPosition(position);
 		if (newPos == null || health <= 0) {
 			game.removeGameObject(this);
-			if(health <= 0) game.getMaterial(Material.GOLD).add(type.getDropedGold());
+			if (health <= 0) game.getMaterial(Material.GOLD).add(type.getDropedGold());
 			//else game.damage(type.getDamage());
 			return;
 		}
@@ -58,20 +74,41 @@ public class Enemy extends BasicMovingEntity{
 		this.hitBox.y = newPos[1];
 
 		setDrawingPriority(hitBox.y - game.getPath().getHeight());
-
 	}
 
-	public float[] getPositionIn(long time) {
-		return game.getPath().getPathPosition(position + time/(50.0f/3.0f)*(type.getSpeed()/60.0f));
+	private void updateColor() {
+		Effects e = Effects.NONE;
+		for(Effects e2: effectDurations.keySet()) {
+			e = e2;
+			break;
+		}
+
+		float[] c = new float[4];
+		if(e == Effects.NONE) {
+			c[3] = 1;
+			c[2] = 0;
+			c[1] = 0;
+			c[0] = 0;
+		} else {
+			Color c2 = e.getHealthColor();
+			c[3] = 1f;
+			c[2] = c2.getBlue()/511.0f;
+			c[1] = c2.getGreen()/511.0f;
+			c[0] = c2.getRed()/511.0f;
+		}
+
+		setColor(c);
 	}
+
 
 	public float[] getPositionIn(int ticks) {
-		return game.getPath().getPathPosition(position + ticks*(type.getSpeed()/60.0f));
+		//TODO: Consider paralysis
+		return game.getPath().getPathPosition(position + ticks * (type.getSpeed() / 60.0f));
 	}
 
 	@Override
-	public boolean equals(Object b){
-		if(b instanceof Enemy) {
+	public boolean equals(Object b) {
+		if (b instanceof Enemy) {
 			Enemy e = (Enemy) b;
 			return e.type == type && e.position == position && e.health == health;
 		}
@@ -84,10 +121,19 @@ public class Enemy extends BasicMovingEntity{
 	}
 
 	public void damage(int damage) {
-		this.health = Math.max(0, health-damage);
+		this.health = Math.max(0, health - damage);
 	}
 
 	protected float getPosition() {
 		return position;
+	}
+
+	public void applyEffect(Effects ef, int ticks) {
+		effectDurations.put(ef, ticks);
+		updateColor();
+	}
+
+	public boolean hasEffect(Effects ef) {
+		return effectDurations.containsKey(ef);
 	}
 }

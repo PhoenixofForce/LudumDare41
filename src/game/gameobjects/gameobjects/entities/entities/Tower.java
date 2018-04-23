@@ -2,6 +2,7 @@ package game.gameobjects.gameobjects.entities.entities;
 
 import game.Game;
 import game.data.hitbox.HitBox;
+import game.gameobjects.Effects;
 import game.gameobjects.gameobjects.entities.BasicStaticEntity;
 import game.gameobjects.gameobjects.particle.ParticleType;
 import game.util.TimeUtil;
@@ -72,11 +73,17 @@ public class Tower extends BasicStaticEntity {
 							double distance = Math.sqrt(Math.pow(e2.getHitBox().x - e.getHitBox().x, 2) + Math.pow(e2.getHitBox().y - e.getHitBox().y, 2));
 							if(distance < type.getDamageRange()) {
 								e2.damage(Math.round((float)((type.getDamage())/(Math.pow(distance+1, 2)))));
+								if(type.getEffects() != Effects.NONE) {
+									if(Math.random() < type.getEffects().getTrigger()) e2.applyEffect(type.getEffects(), 3);
+								}
 							}
 						}
 					}
 
 					e.damage(type.getDamage());
+					if(type.getEffects() != Effects.NONE) {
+						if(Math.random() < type.getEffects().getTrigger()) e.applyEffect(type.getEffects(), 3);
+					}
 					damageTimer.remove(i);
 				}
 			}
@@ -85,7 +92,7 @@ public class Tower extends BasicStaticEntity {
 		Enemy focus = null;
 		for(int i = 0; i < game.getEnemies().size(); i++) {
 			Enemy e = game.getEnemies().get(i);
-			if(inRange(e.getPositionIn(type.getParticleType().getLifeTime())) && (focus == null || focus.getPosition() < e.getPosition())) {
+			if(inRange(e.getPositionIn(type.getParticleType().getLifeTime())) && (focus == null || focus.getPosition() < e.getPosition() || (focus.hasEffect(type.getEffects()) && type.getEffects() != Effects.BURNING))) {
 				focus = e;
 			}
 		}

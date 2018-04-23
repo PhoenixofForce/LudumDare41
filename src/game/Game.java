@@ -256,7 +256,6 @@ public class Game {
 				materials.get(Material.GOLD).remove(selectedTower.getGoldCosts());
 				materials.get(Material.WOOD).remove(selectedTower.getWoodCosts());
 				materials.get(Material.STONE).remove(selectedTower.getStoneCosts());
-				selectedTower = null;
 			}
 		}
 
