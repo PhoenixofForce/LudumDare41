@@ -198,6 +198,38 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
+				if (selectedTower != null && !mouseConsumed) {
+					TowerType b = selectedTower;
+
+					float factor = (float) Math.pow(Game.TOWER_FACTOR, game.getTowerCount(b));
+					game.textGold.setText("<gold> " + Math.round(factor * b.getGoldCosts()));
+					game.textGold.setColor(game.getMaterial(Material.GOLD).getAmount() >= Math.round(factor * b.getGoldCosts()) ? Color.WHITE : Color.RED);
+					game.textWood.setText("<wood> " + Math.round(factor * b.getWoodCosts()));
+					game.textWood.setColor(game.getMaterial(Material.WOOD).getAmount() >= Math.round(factor * b.getWoodCosts()) ? Color.WHITE : Color.RED);
+					game.textStone.setText("<stone> " + Math.round(factor * b.getStoneCosts()));
+					game.textStone.setColor(game.getMaterial(Material.STONE).getAmount() >= Math.round(factor * b.getStoneCosts()) ? Color.WHITE : Color.RED);
+					game.textInfo.setText("Builds a new " + b.name() + " tower");
+					game.textInfo.setColor(Color.WHITE);
+
+					game.whoDidThis = 342364;
+				} else if (selectedBuilding != null && !mouseConsumed) {
+					BuildingType b = selectedBuilding;
+
+					float factor = (float) Math.pow(Game.BUILDING_FACTOR, game.getBuildingCount(b));
+					game.textGold.setText("<gold> " + Math.round(factor * b.getGoldCosts()));
+					game.textGold.setColor(game.getMaterial(Material.GOLD).getAmount() >= Math.round(factor * b.getGoldCosts()) ? Color.WHITE : Color.RED);
+					game.textWood.setText("<wood> " + Math.round(factor * b.getWoodCosts()));
+					game.textWood.setColor(game.getMaterial(Material.WOOD).getAmount() >= Math.round(factor * b.getWoodCosts()) ? Color.WHITE : Color.RED);
+					game.textStone.setText("<stone> " + Math.round(factor * b.getStoneCosts()));
+					game.textStone.setColor(game.getMaterial(Material.STONE).getAmount() >= Math.round(factor * b.getStoneCosts()) ? Color.WHITE : Color.RED);
+					game.textInfo.setText("Builds a new " + b.name() + " building");
+					game.textInfo.setColor(Color.WHITE);
+
+					game.whoDidThis = 342364;
+				} else if (game.whoDidThis == 342364) {
+					game.removeToolTip();
+				}
+
 				if ((selectedBuilding == null && selectedTower == null) || mouseConsumed) {
 					hitBox.width = 0;
 				} else if (selectedBuilding != null) {

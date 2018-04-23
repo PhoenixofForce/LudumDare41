@@ -3,7 +3,6 @@ package game.gameobjects.gameobjects;
 import game.Game;
 import game.gameobjects.AbstractGameObject;
 import game.gameobjects.Material;
-import game.gameobjects.gameobjects.entities.entities.Building;
 import game.gameobjects.gameobjects.entities.entities.BuildingType;
 import game.gameobjects.gameobjects.entities.entities.TowerType;
 import game.util.TextureHandler;
@@ -24,8 +23,8 @@ public class Menu extends AbstractGameObject implements Drawable {
 	public static final float[] NO_HIGHTLIGHT_COLOR = new float[]{0, 0, 0, 1};
 	public static final float[] HIGHTLIGHT_COLOR = new float[]{0.125f, 0.125f, 0.125f, 1};
 	private MenuRow mainToolBar = new MenuRow(null, SIZE);
-	private MenuRow buildingToolBar = new MenuRow(mainToolBar, 2*SIZE);
-	private MenuRow buildingToolBar2 = new MenuRow(buildingToolBar, 2*SIZE);
+	private MenuRow buildingToolBar = new MenuRow(mainToolBar, 2 * SIZE);
+	private MenuRow buildingToolBar2 = new MenuRow(buildingToolBar, 2 * SIZE);
 
 	private List<MenuRow> menuRows;
 
@@ -66,6 +65,11 @@ public class Menu extends AbstractGameObject implements Drawable {
 			public void onClick() {
 				game.setDestroyTowers();
 			}
+
+			@Override
+			public boolean get3() {
+				return true;
+			}
 		};
 		mainToolBar.addMenuItem(menuItem1);
 		mainToolBar.addMenuItem(menuItem2);
@@ -73,8 +77,8 @@ public class Menu extends AbstractGameObject implements Drawable {
 	}
 
 	private void createBuildingToolBar() {
-		buildingToolBar.setX(mainToolBar.x - 2*mainToolBar.getWidth()/6);
-		for (TowerType type: TowerType.values()) {
+		buildingToolBar.setX(mainToolBar.x - 2 * mainToolBar.getWidth() / 6);
+		for (TowerType type : TowerType.values()) {
 			MenuItem item = new IconMenuItem(type.getSprite().getTexture(0, 0), mainToolBar, buildingToolBar, buildingToolBar2) {
 
 				@Override
@@ -94,8 +98,8 @@ public class Menu extends AbstractGameObject implements Drawable {
 	}
 
 	private void createBuildingToolBar2() {
-		buildingToolBar2.setX(mainToolBar.x - 2*mainToolBar.getWidth()/6);
-		for (BuildingType type: BuildingType.values()) {
+		buildingToolBar2.setX(mainToolBar.x - 2 * mainToolBar.getWidth() / 6);
+		for (BuildingType type : BuildingType.values()) {
 			MenuItem item = new IconMenuItem(type.getSprite().getTexture(0, 0), mainToolBar, buildingToolBar, buildingToolBar2) {
 
 				@Override
@@ -141,8 +145,15 @@ public class Menu extends AbstractGameObject implements Drawable {
 				menuRows = Arrays.asList(mainToolBar);
 			} else {
 				menuRows = hightlighted.getMenuRows();
+				if (hightlighted.get3()) {
+					game.textGold.setText("");
+					game.textWood.setText("");
+					game.textStone.setText("");
+					game.textInfo.setText("Destroy a tower to get back half the price");
+					game.textInfo.setColor(Color.WHITE);
 
-				if (hightlighted.get1() != null) {
+					game.whoDidThis = 37525423;
+				} else if (hightlighted.get1() != null) {
 					TowerType b = hightlighted.get1();
 
 					float factor = (float) Math.pow(Game.TOWER_FACTOR, game.getTowerCount(b));
@@ -178,7 +189,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 			}
 		}
 
-		for (MenuRow menuRow: menuRows) menuRow.update();
+		for (MenuRow menuRow : menuRows) menuRow.update();
 	}
 
 	public boolean setMousePosition(float x, float y) {
@@ -193,12 +204,12 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 	private MenuRow getMousedMenuRow(float x, float y) {
 		float ty = 1;
-		for (MenuRow menuRow: menuRows) {
+		for (MenuRow menuRow : menuRows) {
 			ty -= menuRow.getHeight();
 			if (y > ty + menuRow.getHeight() || y < ty) continue;
 
 			float w = menuRow.getWidth();
-			if (x >= (menuRow.x - w/2)/game.getWindow().getAspectRatio() && x <= (menuRow.x + w/2)/ (game.getWindow().getAspectRatio())) {
+			if (x >= (menuRow.x - w / 2) / game.getWindow().getAspectRatio() && x <= (menuRow.x + w / 2) / (game.getWindow().getAspectRatio())) {
 				return menuRow;
 			}
 		}
@@ -211,7 +222,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 		BasicShader basicShader = (BasicShader) window.getShaderHandler().getShader(ShaderType.BASIC_SHADER);
 
 		float y = 1;
-		for (MenuRow menuRow: menuRows) {
+		for (MenuRow menuRow : menuRows) {
 			menuRow.draw(window, basicShader, menuShader, y);
 			y -= menuRow.getHeight();
 		}
@@ -227,38 +238,62 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 	}
 
+	interface MenuItem {
+		void draw(Window window, BasicShader shader1, MenuShader shader2, float x, float y, float height);
+
+		float getWidth();
+
+		void onClick();
+
+		List<MenuRow> getMenuRows();
+
+		default TowerType get1() {
+			return null;
+		}
+
+		default BuildingType get2() {
+			return null;
+		}
+
+		default boolean get3() {
+			return false;
+		}
+	}
+
 	class MenuRow {
 		private List<MenuItem> items;
 		private MenuRow parent;
 		private float x;
 		private float height;
+
 		public MenuRow(MenuRow parent, float height) {
 			items = new ArrayList<>();
 			this.parent = parent;
 			this.x = 0;
 			this.height = height;
 		}
+
 		void setX(float x) {
 			this.x = x;
 		}
 
 		void draw(Window window, BasicShader shader1, MenuShader shader2, float y) {
-			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size(), window.getAspectRatio(), SIZE, BORDER);
+			shader2.draw((x - getWidth() / 2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size(), window.getAspectRatio(), SIZE, BORDER);
 
-			float x2 = (x - getWidth()/2)+4*BORDER*SIZE;
-			for (MenuItem item: items) {
-				item.draw(window, shader1, shader2, x2, y-4*BORDER*SIZE, getHeight()-8*BORDER*SIZE);
+			float x2 = (x - getWidth() / 2) + 4 * BORDER * SIZE;
+			for (MenuItem item : items) {
+				item.draw(window, shader1, shader2, x2, y - 4 * BORDER * SIZE, getHeight() - 8 * BORDER * SIZE);
 				x2 += item.getWidth();
 			}
 		}
 
 		float getHeight() {
-			return height+8*BORDER*SIZE;
+			return height + 8 * BORDER * SIZE;
 		}
 
 		float getWidth() {
-			float w = 8*BORDER*SIZE;
-			for (MenuItem m: items) w += m.getWidth();
+			float w = 8 * BORDER * SIZE;
+			for (MenuItem m : items) w += m.getWidth();
 			return w;
 		}
 
@@ -267,15 +302,16 @@ public class Menu extends AbstractGameObject implements Drawable {
 		}
 
 		MenuItem getMenuItem(float x, float y) {
-			float x2 = this.x - getWidth()/2+4*BORDER*SIZE;
-			if (x <= (x2)/game.getWindow().getAspectRatio()) return items.get(0);
+			float x2 = this.x - getWidth() / 2 + 4 * BORDER * SIZE;
+			if (x <= (x2) / game.getWindow().getAspectRatio()) return items.get(0);
 
-			for (MenuItem item: items) {
-				if ((x2)/game.getWindow().getAspectRatio() <= x && (x2 + item.getWidth())/game.getWindow().getAspectRatio() >= x) return item;
+			for (MenuItem item : items) {
+				if ((x2) / game.getWindow().getAspectRatio() <= x && (x2 + item.getWidth()) / game.getWindow().getAspectRatio() >= x)
+					return item;
 				x2 += item.getWidth();
 			}
 
-			return items.get(items.size()-1);
+			return items.get(items.size() - 1);
 		}
 
 		void update() {
@@ -283,16 +319,6 @@ public class Menu extends AbstractGameObject implements Drawable {
 				menuRows.remove(this);
 			}
 		}
-	}
-
-
-	interface MenuItem {
-		void draw(Window window, BasicShader shader1, MenuShader shader2, float x, float y, float height);
-		float getWidth();
-		void onClick();
-		List<MenuRow> getMenuRows();
-		default TowerType get1() {return null;}
-		default BuildingType get2() {return null;}
 	}
 
 	abstract class IconMenuItem implements MenuItem {
@@ -313,7 +339,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 		@Override
 		public void draw(Window window, BasicShader shader1, MenuShader shader2, float x, float y, float height) {
-			shader1.draw((x+ BORDER*getWidth()) / window.getAspectRatio(), y-height*(1-BORDER), (1-2*BORDER)*getWidth() / window.getAspectRatio(), height*(1-2*BORDER), r.x, r.y, r.width, r.height, false, hightlighted == this ? HIGHTLIGHT_COLOR : NO_HIGHTLIGHT_COLOR);
+			shader1.draw((x + BORDER * getWidth()) / window.getAspectRatio(), y - height * (1 - BORDER), (1 - 2 * BORDER) * getWidth() / window.getAspectRatio(), height * (1 - 2 * BORDER), r.x, r.y, r.width, r.height, false, hightlighted == this ? HIGHTLIGHT_COLOR : NO_HIGHTLIGHT_COLOR);
 		}
 
 		@Override
