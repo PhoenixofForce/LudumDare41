@@ -11,7 +11,7 @@ public class MenuShader extends ShaderProgram {
 	private static final String BASIC_VERTEX_FILE = "menuVertexShader";
 
 	private int xLocation, yLocation, widthLocation, heightLocation;
-	private int useCameraLocation, amountLocation;
+	private int useCameraLocation, amountLocation, screenRatioLocation;
 
 	public MenuShader() {
 		super(BASIC_VERTEX_FILE, BASIC_FRAGMENT_FILE);
@@ -32,6 +32,7 @@ public class MenuShader extends ShaderProgram {
 		heightLocation = getUniformLocation("height");
 		useCameraLocation = getUniformLocation("useCamera");
 		amountLocation = getUniformLocation("amount");
+		screenRatioLocation = getUniformLocation("screenRatio");
 	}
 
 	/**
@@ -60,11 +61,17 @@ public class MenuShader extends ShaderProgram {
 		setUniform1i(amountLocation, amount);
 	}
 
-	public void draw(float x, float y, float width, float height, boolean useCamera, int amount) {
+
+	public void setScreenRatio(float screenRatio) {
+		setUniform1f(screenRatioLocation, screenRatio);
+	}
+
+	public void draw(float x, float y, float width, float height, boolean useCamera, int amount, float screenRatio) {
 		start();
 		setBounds(x, y, width, height);
 		setUseCamera(useCamera);
 		setAmount(amount);
+		setScreenRatio(screenRatio);
 		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 	}
 }

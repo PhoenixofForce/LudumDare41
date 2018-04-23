@@ -1,6 +1,7 @@
 #version 130
 
 const float border = 0.0625;
+const float size = 0.1;
 
 uniform sampler2D tex;
 uniform int lightAmount;
@@ -9,7 +10,7 @@ uniform vec3 lightColors[128];
 uniform float minBrightness;
 uniform float useCamera;
 
-uniform float width, height;
+uniform float width, height, screenRatio;
 
 uniform int amount;
 
@@ -25,16 +26,39 @@ void main() {
     }
     brightness = vec3(clamp(brightness.r, 0, 1),clamp(brightness.g, 0, 1),clamp(brightness.b, 0, 1));
 
+    float transparent = 0;
     float black = 0;
+    float yellow = 0;
 
-    float borderY = border/height*0.15;
-    float borderX = borderY*(height/width)/2;
+    float borderY = size*border/height;
+    float borderX = size*border/width / screenRatio;
 
-    float x = mod(fragPos.x, (1.0/amount));
+    if (fragPos.y < 4* borderY || fragPos.y > 1 - 4*borderY || fragPos.x < 4*borderX || fragPos.x > 1-4*borderX) {
+        float left1 = fragPos.x < 2*borderX ? 1 : 0;
+        float left2 = fragPos.x < 4*borderX ? 1 : 0;
+        float down1 = fragPos.y < 2*borderY ? 1 : 0;
+        float down2 = fragPos.y < 4*borderY ? 1 : 0;
+        float right1 = fragPos.x > 1-2*borderX ? 1 : 0;
+        float right2 = fragPos.x > 1-4*borderX ? 1 : 0;
+        float up1 = fragPos.y > 1-2*borderY ? 1 : 0;
+        float up2 = fragPos.y > 1-4*borderY ? 1 : 0;
 
-    if (x < borderX || x > (1.0/amount - borderX)) black = 1;
-    if (fragPos.y < borderY || fragPos.y > (1-borderY)) black = 1;
+        black = (1-left1)*(1-up1)*(1-right1)*(1-down1);
+        yellow = step(1, left2*up2 + right2*up2 + left2*down2 + right2*down2) * (1-black);
+        transparent = 1-step(1,yellow+black);
+    } else {
+        float x = (fragPos.x - 4*borderX) / (1-8*borderX);
+        float y = (fragPos.y - 4*borderY) / (1-8*borderY);
 
-    finalColor = vec4(92.0/255, 56.0/255, 65.0/255, 1) * black + (1-black) * vec4(197.0/255, 104.0/255, 118.0/255, 1);
+        borderX /= (1-8*borderX);
+        borderY /= (1-8*borderY);
+
+        x = mod(x, (1.0/amount));
+
+        if (x < borderX || x > (1.0/amount - borderX)) black = 1;
+        if (y < borderY || y > (1-borderY)) black = 1;
+    }
+
+    finalColor = ((vec4(92.0/255, 56.0/255, 65.0/255, 1) * black + (1-black) * vec4(197.0/255, 104.0/255, 118.0/255, 1))*(1-yellow) + yellow * vec4(214.0/255, 154.0/255, 78.0/255, 1)) * (1-transparent);
     finalColor = vec4(finalColor.r * (brightness.r*(1-minBrightness) + minBrightness), finalColor.g * (brightness.g*(1-minBrightness) + minBrightness), finalColor.b * (brightness.b*(1-minBrightness) + minBrightness), finalColor.a);
 }

@@ -8,7 +8,6 @@ import game.window.Drawable;
 import game.window.Window;
 import game.window.shader.ShaderType;
 import game.window.shader.shader.BasicShader;
-import game.window.shader.shader.ColorShader;
 import game.window.shader.shader.MenuShader;
 
 import java.awt.*;
@@ -18,10 +17,11 @@ import java.util.List;
 
 public class Menu extends AbstractGameObject implements Drawable {
 	public static final float BORDER = 0.0625f;
+	public static final float SIZE = 0.1f;
 	public static final float[] NO_HIGHTLIGHT_COLOR = new float[]{0, 0, 0, 1};
 	public static final float[] HIGHTLIGHT_COLOR = new float[]{0.125f, 0.125f, 0.125f, 1};
-	private MenuRow mainToolBar = new MenuRow(null, 0.15f);
-	private MenuRow buildingToolBar = new MenuRow(mainToolBar, 0.3f);
+	private MenuRow mainToolBar = new MenuRow(null, SIZE);
+	private MenuRow buildingToolBar = new MenuRow(mainToolBar, 2*SIZE);
 
 	private List<MenuRow> menuRows;
 
@@ -100,10 +100,14 @@ public class Menu extends AbstractGameObject implements Drawable {
 			hightlighted = null;
 			menuRows = Arrays.asList(mainToolBar);
 		} else {
-			hightlighted = mouseRow.getMenuItem(mousePositionX);
-			menuRows = hightlighted.getMenuRows();
+			hightlighted = mouseRow.getMenuItem(mousePositionX, mousePositionY);
+			if (hightlighted == null) {
+				menuRows = Arrays.asList(mainToolBar);
+			} else {
+				menuRows = hightlighted.getMenuRows();
 
-			if (mouseClicked) hightlighted.onClick();
+				if (mouseClicked) hightlighted.onClick();
+			}
 		}
 
 		for (MenuRow menuRow: menuRows) menuRow.update();
@@ -126,7 +130,9 @@ public class Menu extends AbstractGameObject implements Drawable {
 			if (y > ty + menuRow.getHeight() || y < ty) continue;
 
 			float w = menuRow.getWidth();
-			if (x >= (menuRow.x - w/2)/game.getWindow().getAspectRatio() && x <= (menuRow.x + w/2)/ (game.getWindow().getAspectRatio())) return menuRow;
+			if (x >= (menuRow.x - w/2)/game.getWindow().getAspectRatio() && x <= (menuRow.x + w/2)/ (game.getWindow().getAspectRatio())) {
+				return menuRow;
+			}
 		}
 		return null;
 	}
@@ -169,21 +175,21 @@ public class Menu extends AbstractGameObject implements Drawable {
 		}
 
 		void draw(Window window, BasicShader shader1, MenuShader shader2, float y) {
-			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size());
+			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size(), window.getAspectRatio());
 
-			float x2 = (x - getWidth()/2);
+			float x2 = (x - getWidth()/2)+4*BORDER*SIZE;
 			for (MenuItem item: items) {
-				item.draw(window, shader1, shader2, x2, y, getHeight());
+				item.draw(window, shader1, shader2, x2, y-4*BORDER*SIZE, getHeight()-8*BORDER*SIZE);
 				x2 += item.getWidth();
 			}
 		}
 
 		float getHeight() {
-			return height;
+			return height+8*BORDER*SIZE;
 		}
 
 		float getWidth() {
-			float w = 0;
+			float w = 8*BORDER*SIZE;
 			for (MenuItem m: items) w += m.getWidth();
 			return w;
 		}
@@ -192,14 +198,16 @@ public class Menu extends AbstractGameObject implements Drawable {
 			items.add(menuItem);
 		}
 
-		MenuItem getMenuItem(float x) {
-			float x2 = this.x - getWidth()/2;
+		MenuItem getMenuItem(float x, float y) {
+			float x2 = this.x - getWidth()/2+4*BORDER*SIZE;
+			if (x <= (x2)/game.getWindow().getAspectRatio()) return items.get(0);
+
 			for (MenuItem item: items) {
 				if ((x2)/game.getWindow().getAspectRatio() <= x && (x2 + item.getWidth())/game.getWindow().getAspectRatio() >= x) return item;
 				x2 += item.getWidth();
 			}
 
-			return null;
+			return items.get(items.size()-1);
 		}
 
 		void update() {
@@ -240,7 +248,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 		@Override
 		public float getWidth() {
-			return 0.15f;
+			return SIZE;
 		}
 
 		@Override
