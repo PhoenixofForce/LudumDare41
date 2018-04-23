@@ -1,4 +1,4 @@
-172
+177
 path_tl 0 0 16 16
 path_t 16 0 16 16
 path_tr 32 0 16 16
@@ -171,3 +171,8 @@ particle_100 54 199 14 5
 particle_1000 54 205 18 5
 particle_10000 54 211 22 5
 particle_100000 54 217 26 5
+building_lumber 80 0 16 32
+building_windmill_0 48 256 32 32
+building_windmill_1 80 256 32 32
+building_windmill_2 112 256 32 32
+building_windmill_3 144 256 32 32

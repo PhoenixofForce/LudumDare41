@@ -13,7 +13,10 @@ public enum ParticleType {
 	MAGIC_TRAIL_1(new Sprite(100, "particle_magic_trail_1"), 100, 1, 1, false),
 	BOMB(new Sprite(100, "particle_bomb"), 35, 1, 1, false),
 	THUNDER(new Sprite(100, "particle_thunder_0", "particle_thunder_1", "particle_thunder_2", "particle_thunder_3", "particle_thunder_4", "particle_thunder_5", "particle_thunder_6", "particle_thunder_7", "particle_thunder_8", "particle_thunder_9", "particle_thunder_10", "particle_thunder_11"), 72, 1, 1, false),
-	PLUS_1(new Sprite(100, "particle_1"), 20, 0.2f, 0.2f, false);
+	PLUS_1(new Sprite(100, "particle_1"), 30, 0.2f, 0.2f, false),
+	PLUS_10(new Sprite(100, "particle_10"), 30, 0.2f, 0.2f, false),
+	PLUS_100(new Sprite(100, "particle_100"), 30, 0.2f, 0.2f, false),
+	PLUS_1000(new Sprite(100, "particle_1000"), 30, 0.2f, 0.2f, false);
 
 	private int lifeTime;
 	private boolean gravity;

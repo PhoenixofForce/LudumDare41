@@ -40,7 +40,7 @@ public class Building extends BasicStaticEntity {
 
 			if(m != null) {
 				game.getMaterial(m).add(1);
-				game.getParticleSystem().createParticle(ParticleType.PLUS_1, getHitBox().getCenterX(), getHitBox().getCenterY(), 3, 3);
+				game.getParticleSystem().createParticle(ParticleType.PLUS_1, getHitBox().getCenterX(), getHitBox().getCenterY(), 0, 0.025f);
 			}
 		}
 	}
