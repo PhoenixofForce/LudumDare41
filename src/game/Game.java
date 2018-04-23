@@ -200,6 +200,8 @@ public class Game {
 		mouseConsumed = menu.setMousePosition(2.0f*curr[0]/window.getWidth() - 1, 2.0f*curr[1]/window.getHeight()-1);
 		menu.setMouseClicked((lastMouseClickTick +1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
+		if(keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
+
 		if (!mouseConsumed && keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE)) cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
 		if(keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick +1 != gameTick) && selectedTower != null && !mouseConsumed) {
 			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
