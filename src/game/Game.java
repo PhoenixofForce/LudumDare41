@@ -9,6 +9,7 @@ import game.gameobjects.gameobjects.Menu;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
+import game.gameobjects.gameobjects.entities.entities.Castle;
 import game.gameobjects.gameobjects.entities.entities.Enemy;
 import game.gameobjects.gameobjects.entities.entities.Tower;
 import game.gameobjects.gameobjects.entities.entities.TowerType;
@@ -48,7 +49,9 @@ public class Game {
 	private TowerType selectedTower = null;
 	private Path path;
 
+	private Castle castle;
 	private Wave wave;
+
 	/**
 	 * update the Keyboard and Controller Inputs
 	 **/
@@ -56,6 +59,10 @@ public class Game {
 
 	public Game(Window window) {
 		this.window = window;
+		reset();
+	}
+
+	private void reset() {
 		Options.applyOptions(this);
 
 		gameTick = 0;
@@ -66,6 +73,9 @@ public class Game {
 
 		path = new Path(this, 32, 18);
 		this.addGameObject(new CameraController(this));
+
+		castle = new Castle(-1, path.getHeight()/2);
+		this.addGameObject(castle);
 
 		wave = new Wave(this);
 
@@ -189,6 +199,7 @@ public class Game {
 
 		this.menu = new Menu();
 		this.addGameObject(menu);
+
 	}
 
 	/**
@@ -197,7 +208,7 @@ public class Game {
 	public void gameLoop() {
 		long time;
 
-		while (window.isRunning()) {
+		while (window.isRunning() /*&& castle.getHealth() != 0*/) {
 			gameTick++;
 			time = TimeUtil.getTime();
 
@@ -242,6 +253,10 @@ public class Game {
 			//Sync the updates to TPS
 			long newTime = TimeUtil.getTime();
 			TimeUtil.sleep((int) (1000.0f / Constants.TPS - (newTime - time)));
+		}
+
+		if(castle.getHealth() == 0) {
+			//TODO: Restart
 		}
 
 		cleanUp();
@@ -426,5 +441,9 @@ public class Game {
 		}
 
 		return c;
+	}
+
+	public Castle getCastle() {
+		return castle;
 	}
 }

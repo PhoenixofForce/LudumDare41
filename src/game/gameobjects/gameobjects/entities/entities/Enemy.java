@@ -67,7 +67,7 @@ public class Enemy extends BasicMovingEntity {
 		if (newPos == null || health <= 0) {
 			game.removeGameObject(this);
 			if (health <= 0) game.getMaterial(Material.GOLD).add(type.getDropedGold());
-			//else game.damage(type.getDamage());
+			else game.getCastle().damage((int) type.getDamage());
 			return;
 		}
 		this.hitBox.x = newPos[0];
