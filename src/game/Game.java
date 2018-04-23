@@ -156,8 +156,14 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
-				if (selectedTower == null || mouseConsumed) {
+				if ((selectedBuilding == null && selectedTower == null) || mouseConsumed) {
 					hitBox.width = 0;
+				} else if (selectedBuilding != null) {
+					setSprite(selectedBuilding.getSprite());
+					hitBox.x = mouseFieldX;
+					hitBox.y = mouseFieldY;
+					hitBox.height = 2;
+					hitBox.width = 1;
 				} else {
 					setSprite(selectedTower.getSprite());
 					hitBox.x = mouseFieldX;
@@ -470,11 +476,19 @@ public class Game {
 	public void setSelectedTower(TowerType selectedTower) {
 		destroyTowers = false;
 		this.selectedTower = selectedTower;
+		selectedBuilding = null;
 	}
 
 	public void setDestroyTowers() {
 		this.destroyTowers = !destroyTowers;
 		selectedTower = null;
+		selectedBuilding = null;
+	}
+
+	public void setSelectedBuilding(BuildingType type) {
+		this.selectedBuilding = type;
+		selectedTower = null;
+		destroyTowers = false;
 	}
 
 	public int getTowerCount(TowerType t) {

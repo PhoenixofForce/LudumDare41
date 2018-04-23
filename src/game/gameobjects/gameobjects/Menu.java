@@ -2,6 +2,7 @@ package game.gameobjects.gameobjects;
 
 import game.Game;
 import game.gameobjects.AbstractGameObject;
+import game.gameobjects.gameobjects.entities.entities.BuildingType;
 import game.gameobjects.gameobjects.entities.entities.TowerType;
 import game.util.TextureHandler;
 import game.window.Drawable;
@@ -22,6 +23,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 	public static final float[] HIGHTLIGHT_COLOR = new float[]{0.125f, 0.125f, 0.125f, 1};
 	private MenuRow mainToolBar = new MenuRow(null, SIZE);
 	private MenuRow buildingToolBar = new MenuRow(mainToolBar, 2*SIZE);
+	private MenuRow buildingToolBar2 = new MenuRow(buildingToolBar, 2*SIZE);
 
 	private List<MenuRow> menuRows;
 
@@ -35,15 +37,17 @@ public class Menu extends AbstractGameObject implements Drawable {
 
 		createMainToolBar();
 		createBuildingToolBar();
+		createBuildingToolBar2();
 
 		menuRows.add(mainToolBar);
 		menuRows.add(buildingToolBar);
+		menuRows.add(buildingToolBar2);
 	}
 
 	private void createMainToolBar() {
 		mainToolBar.setX(0);
 
-		MenuItem menuItem1 = new IconMenuItem("textures_symbol_build", mainToolBar, buildingToolBar) {
+		MenuItem menuItem1 = new IconMenuItem("textures_symbol_build", mainToolBar, buildingToolBar, buildingToolBar2) {
 			@Override
 			public void onClick() {
 
@@ -69,7 +73,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 	private void createBuildingToolBar() {
 		buildingToolBar.setX(mainToolBar.x - 2*mainToolBar.getWidth()/6);
 		for (TowerType type: TowerType.values()) {
-			MenuItem item = new IconMenuItem(type.getSprite().getTexture(0, 0), mainToolBar, buildingToolBar) {
+			MenuItem item = new IconMenuItem(type.getSprite().getTexture(0, 0), mainToolBar, buildingToolBar, buildingToolBar2) {
 
 				@Override
 				public void onClick() {
@@ -79,6 +83,22 @@ public class Menu extends AbstractGameObject implements Drawable {
 			};
 
 			buildingToolBar.addMenuItem(item);
+		}
+	}
+
+	private void createBuildingToolBar2() {
+		buildingToolBar2.setX(mainToolBar.x - 2*mainToolBar.getWidth()/6);
+		for (BuildingType type: BuildingType.values()) {
+			MenuItem item = new IconMenuItem(type.getSprite().getTexture(0, 0), mainToolBar, buildingToolBar, buildingToolBar2) {
+
+				@Override
+				public void onClick() {
+					menuRows = Arrays.asList(mainToolBar);
+					game.setSelectedBuilding(type);
+				}
+			};
+
+			buildingToolBar2.addMenuItem(item);
 		}
 	}
 
