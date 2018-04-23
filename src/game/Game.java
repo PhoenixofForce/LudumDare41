@@ -309,7 +309,7 @@ public class Game {
 			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
-			} else if (selectedTower.getStoneCosts() > materials.get(Material.STONE).getAmount() || selectedTower.getWoodCosts() > materials.get(Material.WOOD).getAmount() || selectedTower.getGoldCosts() > materials.get(Material.GOLD).getAmount()) {
+			} else if (Math.round(selectedTower.getStoneCosts() * (1 + 1.15f * getTowerCount(selectedTower))) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * (1 + 1.15f * getTowerCount(selectedTower))) > materials.get(Material.WOOD).getAmount() || selectedTower.getGoldCosts() > materials.get(Material.GOLD).getAmount()) {
 				createErrorText("Not enough materials");
 				getCamera().addScreenshake(0.02f);
 			} else {
