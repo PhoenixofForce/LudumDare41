@@ -1,5 +1,6 @@
 package game;
 
+import game.gameobjects.Material;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.entities.entities.Enemy;
 import game.gameobjects.gameobjects.entities.entities.EnemyType;
@@ -9,8 +10,9 @@ import java.awt.*;
 
 public class Wave {
 
+	private static final int FIRST_WAVE_TIME 		= 30;
 	private static final int SECONDS_BETWEENROUNDS 	= 15;
-	private static final int SECONDS_UNTIL_NEXT		= 90;
+	private static final int SECONDS_UNTIL_NEXT		= 360;
 
 	private Game game;
 	private int wave;
@@ -20,7 +22,8 @@ public class Wave {
 	private boolean skipToNext;
 
 	private int currentGs = -1, currentRs = -1, currentBs = -1;
-	private int lastTickSpawned;
+	private int lastTickSpawned_R, lastTickSpawned_G, lastTickSpawned_B;
+	private int enemiesKilled = 0;
 
 	private Text waveDisplay, secondLine;
 
@@ -39,39 +42,50 @@ public class Wave {
 	}
 
 	public void update() {
-		if((skipToNext || TimeUtil.getTime()-(1000L*SECONDS_BETWEENROUNDS) >= waveEnded) && state == 0) {
+		if((skipToNext || (wave != 1? TimeUtil.getTime()-(1000L*SECONDS_BETWEENROUNDS): TimeUtil.getTime()-(1000L*FIRST_WAVE_TIME)) >= waveEnded) && state == 0) {
 			currentBs = 0;
 			currentGs = 0;
 			currentRs = 0;
 
+			enemiesKilled = 0;
+
 			state = 1;
+
+			if(skipToNext) game.getMaterial(Material.GOLD).add((int)((wave != 1? SECONDS_BETWEENROUNDS: FIRST_WAVE_TIME)-(TimeUtil.getTime()-waveEnded)/1000));
+			for(Material m: Material.values()) game.getMaterial(m).add(50);		//FOR TESTING
 		} else {
-			waveDisplay.setText("Wave " + wave + " in " + Math.max(0, (SECONDS_BETWEENROUNDS-(TimeUtil.getTime()-waveEnded)/1000)));
+			waveDisplay.setText("Wave " + wave + " in " + Math.max(0, ((wave != 1? SECONDS_BETWEENROUNDS: FIRST_WAVE_TIME)-(TimeUtil.getTime()-waveEnded)/1000)));
 			secondLine.setText("Spacebar to jump");
 		}
 
 		if(state == 1 || state == 2) {
 			waveDisplay.setText("Wave " + (wave+1) + " in " + Math.max((SECONDS_UNTIL_NEXT-(TimeUtil.getTime()-waveEnded)/1000), 0));
-			secondLine.setText("Enemies left " + game.getEnemies().size());
+			secondLine.setText("Enemies left " + Math.abs((greenSlimes() + blueSlimes() + redSlimes() - enemiesKilled)));
 		}
 
+		//SPAWNING
 		if(state == 1) {
-			if(currentRs <= redSlimes() && game.getGameTick()-60 >= lastTickSpawned) {
+			if(currentRs < redSlimes() && game.getGameTick()-65 >= lastTickSpawned_R) {
 				game.addGameObject(new Enemy(EnemyType.RED_SLIME));
 				currentRs++;
-				lastTickSpawned = game.getGameTick();
-			}else if(currentBs <= blueSlimes() && game.getGameTick()-60 >= lastTickSpawned) {
+				lastTickSpawned_R = game.getGameTick();
+			}
+
+			if(currentBs < blueSlimes() && game.getGameTick()-60 >= lastTickSpawned_B && currentRs >= Math.ceil(redSlimes()/2.0f)-wave/2.0f) {
 				game.addGameObject(new Enemy(EnemyType.BLUE_SLIME));
 				currentBs++;
-				lastTickSpawned = game.getGameTick();
-			} else if(currentGs <= greenSlimes() && game.getGameTick()-60 >= lastTickSpawned) {
+				lastTickSpawned_B = game.getGameTick();
+			}
+
+			if(currentGs < greenSlimes() && game.getGameTick()-55 >= lastTickSpawned_G && currentBs >= Math.ceil(blueSlimes()/2.0f)-wave/2.0f) {
 				game.addGameObject(new Enemy(EnemyType.GREEN_SLIME));
 				currentGs++;
-				lastTickSpawned = game.getGameTick();
+				lastTickSpawned_G = game.getGameTick();
 			}
 		}
-		if(state == 1 && blueSlimes() <= currentBs && redSlimes() <= currentRs && greenSlimes() <= currentGs) state = 2;
+		if(state == 1 && blueSlimes() == currentBs && redSlimes() == currentRs && greenSlimes() == currentGs) state = 2;
 
+		//Probably removing first condition
 		if((waveEnded <= TimeUtil.getTime() - (1000L*SECONDS_UNTIL_NEXT) || game.getEnemies().size() == 0) && state == 2) {
 			state = 0;
 			skipToNext = false;
@@ -84,15 +98,25 @@ public class Wave {
 		if(state == 0) skipToNext = true;
 	}
 
+	public void enemyKilled() {
+		enemiesKilled++;
+	}
+
 	private int blueSlimes() {
-		return Math.round(1.5f * wave);
+		return Math.max(
+				Math.max(Math.round(1.0f * wave), 2)
+				, 0);
 	}
 
 	private int redSlimes() {
-		return Math.round(1.5f * wave);
+		return Math.max(
+				Math.round(0.3f * (wave - 4))
+				, 0);
 	}
 
 	private int greenSlimes() {
-		return Math.round(1.5f * wave);
+		return Math.max(
+				Math.round(0.5f * (wave - 9))
+				, 0);
 	}
 }

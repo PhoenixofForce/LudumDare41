@@ -147,7 +147,10 @@ public class Game {
 				if (gameObject instanceof Drawable) window.removeDrawable((Drawable) gameObject);
 				if (gameObject instanceof ParticleSystem) particleSystem = null;
 				if (gameObject instanceof CameraController) cameraController = null;
-				if(gameObject instanceof Enemy) enemies.remove(gameObject);
+				if(gameObject instanceof Enemy) {
+					wave.enemyKilled();
+					enemies.remove(gameObject);
+				}
 			}
 
 			//Add gameObjects

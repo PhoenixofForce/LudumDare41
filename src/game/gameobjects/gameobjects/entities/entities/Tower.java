@@ -4,7 +4,6 @@ import game.Game;
 import game.data.hitbox.HitBox;
 import game.gameobjects.gameobjects.entities.BasicStaticEntity;
 import game.gameobjects.gameobjects.particle.ParticleType;
-import game.util.MathUtil;
 import game.util.TimeUtil;
 
 import java.util.ArrayList;
