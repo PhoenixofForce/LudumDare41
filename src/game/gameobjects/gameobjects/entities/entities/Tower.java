@@ -74,7 +74,7 @@ public class Tower extends BasicStaticEntity {
 							if(distance < type.getDamageRange()) {
 								e2.damage(Math.round((float)((type.getDamage())/(Math.pow(distance+1, 2)))));
 								if(type.getEffects() != Effects.NONE) {
-									if(Math.random() < type.getEffects().getTrigger()) e2.applyEffect(type.getEffects(), 3);
+									if(Math.random() < type.getEffects().getTrigger()/2.0f) e2.applyEffect(type.getEffects(), 3);
 								}
 							}
 						}

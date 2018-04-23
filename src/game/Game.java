@@ -10,10 +10,7 @@ import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
 import game.gameobjects.gameobjects.entities.ClickBar;
-import game.gameobjects.gameobjects.entities.entities.Castle;
-import game.gameobjects.gameobjects.entities.entities.Enemy;
-import game.gameobjects.gameobjects.entities.entities.Tower;
-import game.gameobjects.gameobjects.entities.entities.TowerType;
+import game.gameobjects.gameobjects.entities.entities.*;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
 import game.gameobjects.gameobjects.particle.ParticleType;
 import game.util.TimeUtil;
@@ -49,6 +46,7 @@ public class Game {
 	private List<Enemy> enemies;
 	private boolean destroyTowers = false;
 	private TowerType selectedTower = null;
+	private BuildingType selectedBuilding = null;
 	private Path path;
 
 	private Castle castle;
@@ -286,6 +284,7 @@ public class Game {
 		if (keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) {
 			selectedTower = null;
+			selectedBuilding = null;
 			destroyTowers = false;
 		}
 
@@ -294,8 +293,39 @@ public class Game {
 
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && destroyTowers && !mouseConsumed) {
 			if (path.getTower(mouseFieldX, mouseFieldY) == null) {
-				createErrorText("You cannot destroy this");
-				getCamera().addScreenshake(0.02f);
+				if (path.getBuilding(mouseFieldX, mouseFieldY) == null) {
+					createErrorText("You cannot destroy this");
+					getCamera().addScreenshake(0.02f);
+				} else {
+					Building Building = path.getBuilding(mouseFieldX, mouseFieldY);
+					this.removeGameObject(Building);
+					path.removeBuilding(mouseFieldX, mouseFieldY);
+
+					getCamera().addScreenshake(0.01f);
+					particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
+
+					double factor = Math.pow(1.075, getBuildingCount(selectedBuilding));
+					materials.get(Material.GOLD).add((int) Math.round(Building.getType().getGoldCosts() * factor/2));
+					materials.get(Material.STONE).add((int) Math.round(Building.getType().getStoneCosts() * factor/2));
+					materials.get(Material.WOOD).add((int) Math.round(Building.getType().getWoodCosts() * factor/2));
+
+					int gt = getGameTick();
+					this.addGameObject(new BasicDrawingEntity(new HitBox(mouseFieldX, mouseFieldY, 1, 2), 0) {
+						{
+							setSprite(Building.getType().getSprite());
+						}
+						@Override
+						public float getPriority() {
+							return 0;
+						}
+
+						@Override
+						public void update(Game game) {
+							setColor(new float[] {0, 0, 0, 1-1.0f*(game.getGameTick()-gt)/(ParticleType.EXPLOSION.getLifeTime())});
+							if (game.getGameTick() >= gt + (ParticleType.EXPLOSION.getLifeTime())) removeGameObject(this);
+						}
+					});
+				}
 			} else {
 				Tower tower = path.getTower(mouseFieldX, mouseFieldY);
 				this.removeGameObject(tower);
@@ -328,23 +358,33 @@ public class Game {
 			}
 		}
 
-		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && selectedTower != null && !mouseConsumed) {
-			double factor = Math.pow(1.15, getTowerCount(selectedTower));
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && (selectedTower != null || selectedBuilding != null) && !mouseConsumed) {
+			double factor = selectedTower != null? Math.pow(1.15, getTowerCount(selectedTower)): Math.pow(1.075, getBuildingCount(selectedBuilding));
 
 			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
 				getCamera().addScreenshake(0.02f);
-			} else if (Math.round(selectedTower.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedTower.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount()) {
+			} else if ((selectedBuilding != null && (Math.round(selectedBuilding.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedBuilding.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedBuilding.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount())) || (selectedTower != null && (Math.round(selectedTower.getStoneCosts()*factor) > materials.get(Material.STONE).getAmount() || Math.round(selectedTower.getWoodCosts() * factor) > materials.get(Material.WOOD).getAmount() || Math.round(selectedTower.getGoldCosts()*factor) > materials.get(Material.GOLD).getAmount()))) {
 				createErrorText("Not enough materials");
 				getCamera().addScreenshake(0.02f);
 			} else {
-				Tower tower = new Tower(selectedTower, mouseFieldX, mouseFieldY);
-				path.addTower(mouseFieldX, mouseFieldY, tower);
-				this.addGameObject(tower);
+				if(selectedTower != null) {
+					Tower tower = new Tower(selectedTower, mouseFieldX, mouseFieldY);
+					path.addTower(mouseFieldX, mouseFieldY, tower);
+					this.addGameObject(tower);
 
-				materials.get(Material.GOLD).remove((int) Math.round(selectedTower.getGoldCosts() * factor));
-				materials.get(Material.WOOD).remove((int) Math.round(selectedTower.getWoodCosts() * factor));
-				materials.get(Material.STONE).remove((int) Math.round(selectedTower.getStoneCosts() * factor));
+					materials.get(Material.GOLD).remove((int) Math.round(selectedTower.getGoldCosts() * factor));
+					materials.get(Material.WOOD).remove((int) Math.round(selectedTower.getWoodCosts() * factor));
+					materials.get(Material.STONE).remove((int) Math.round(selectedTower.getStoneCosts() * factor));
+				} else {
+					Building building = new Building(selectedBuilding, mouseFieldX, mouseFieldY);
+					path.addBuilding(mouseFieldX, mouseFieldY, building);
+					this.addGameObject(building);
+
+					materials.get(Material.GOLD).remove((int) Math.round(selectedBuilding.getGoldCosts() * factor));
+					materials.get(Material.WOOD).remove((int) Math.round(selectedBuilding.getWoodCosts() * factor));
+					materials.get(Material.STONE).remove((int) Math.round(selectedBuilding.getStoneCosts() * factor));
+				}
 			}
 		}
 
@@ -444,6 +484,20 @@ public class Game {
 			if(!toRemove.contains(go)) {
 				if(go instanceof  Tower) {
 					if(((Tower) go).getType() == t) c++;
+				}
+			}
+		}
+
+		return c;
+	}
+
+	public int getBuildingCount(BuildingType t) {
+		int c = 0;
+
+		for(GameObject go: gameObjects) {
+			if(!toRemove.contains(go)) {
+				if(go instanceof  Building) {
+					if(((Building) go).getType() == t) c++;
 				}
 			}
 		}

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Effects {
-	PARALYSED(0.3f, 0.95f, 0.5f, 0.75f, Color.BLUE),
-	BURNING(0.5f, 3, 2, 1, Color.RED),
+	PARALYSED(0.6f, 0.95f, 0.5f, 0.7f, Color.BLUE),
+	BURNING(0.4f, 3, 2, 1, Color.RED),
 	NONE(0, 0, 0, 0, null);
 
 	private Color healthColor;

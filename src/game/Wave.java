@@ -52,7 +52,7 @@ public class Wave {
 			state = 1;
 
 			if(skipToNext) game.getMaterial(Material.GOLD).add((int)((wave != 1? SECONDS_BETWEENROUNDS: FIRST_WAVE_TIME)-(TimeUtil.getTime()-waveEnded)/1000));
-			for(Material m: Material.values()) game.getMaterial(m).add(50);		//FOR TESTING
+			//for(Material m: Material.values()) game.getMaterial(m).add(50);		//FOR TESTING
 		} else {
 			waveDisplay.setText("Wave " + wave + " in " + Math.max(0, ((wave != 1? SECONDS_BETWEENROUNDS: FIRST_WAVE_TIME)-(TimeUtil.getTime()-waveEnded)/1000)));
 			secondLine.setText("Spacebar to jump");

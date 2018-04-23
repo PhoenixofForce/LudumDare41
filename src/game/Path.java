@@ -1,6 +1,7 @@
 package game;
 
 import game.data.hitbox.HitBox;
+import game.gameobjects.gameobjects.entities.entities.Building;
 import game.gameobjects.gameobjects.entities.entities.Tower;
 import game.gameobjects.gameobjects.wall.Background;
 
@@ -10,6 +11,7 @@ public class Path {
 
 	private boolean[][] path;
 	private Tower[][] towers;
+	private Building[][] buildings;
 	private int width, height;
 
 	private List<float[]> pathFields = new ArrayList<>();
@@ -40,9 +42,11 @@ public class Path {
 		pathFields.add(new float[]{last[0] - 1, last[1]});
 
 		towers = new Tower[width][height];
+		buildings = new Building[width][height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				towers[x][y] = null;
+				buildings[x][y] = null;
 			}
 		}
 
@@ -71,7 +75,7 @@ public class Path {
 	}
 
 	public boolean isBlocked(int x, int y) {
-		return x >= 0 && x < width && y >= 0 && y < height && (path[x][y] || towers[x][y] != null);
+		return x >= 0 && x < width && y >= 0 && y < height && (path[x][y] || towers[x][y] != null || buildings[x][y] != null);
 	}
 
 	public void addTower(int x, int y, Tower t) {
@@ -85,6 +89,19 @@ public class Path {
 	public Tower getTower(int x, int y) {
 		if (x < 0 || x >= width || y < 0 || y >= height) return null;
 		return towers[x][y];
+	}
+
+	public void addBuilding(int x, int y, Building t) {
+		buildings[x][y] = t;
+	}
+
+	public void removeBuilding(int x, int y) {
+		buildings[x][y] = null;
+	}
+
+	public Building getBuilding(int x, int y) {
+		if (x < 0 || x >= width || y < 0 || y >= height) return null;
+		return buildings[x][y];
 	}
 
 	public int getWidth() {

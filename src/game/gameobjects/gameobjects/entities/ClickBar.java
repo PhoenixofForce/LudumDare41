@@ -3,6 +3,7 @@ package game.gameobjects.gameobjects.entities;
 import game.Game;
 import game.gameobjects.AbstractGameObject;
 import game.gameobjects.Material;
+import game.gameobjects.gameobjects.particle.ParticleType;
 import game.util.TextureHandler;
 import game.window.Drawable;
 import game.window.Keyboard;
