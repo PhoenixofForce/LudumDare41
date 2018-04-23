@@ -35,7 +35,7 @@ public class Tower extends BasicStaticEntity {
 	@Override
 	public void init(Game game) {
 		super.init(game);
-		this.setDrawingPriority(hitBox.y - game.getPath().getHeight());
+		this.setDrawingPriority(hitBox.y / game.getPath().getHeight());
 	}
 
 	public TowerType getType() {

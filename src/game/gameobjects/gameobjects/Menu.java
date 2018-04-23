@@ -58,7 +58,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 		MenuItem menuItem3 = new IconMenuItem("textures_symbol_delete", mainToolBar) {
 			@Override
 			public void onClick() {
-
+				game.setDestroyTowers();
 			}
 		};
 		mainToolBar.addMenuItem(menuItem1);

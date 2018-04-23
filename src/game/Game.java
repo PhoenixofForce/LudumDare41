@@ -13,6 +13,7 @@ import game.gameobjects.gameobjects.entities.entities.Enemy;
 import game.gameobjects.gameobjects.entities.entities.Tower;
 import game.gameobjects.gameobjects.entities.entities.TowerType;
 import game.gameobjects.gameobjects.particle.ParticleSystem;
+import game.gameobjects.gameobjects.particle.ParticleType;
 import game.util.TimeUtil;
 import game.window.Camera;
 import game.window.Drawable;
@@ -43,6 +44,7 @@ public class Game {
 	private boolean mouseConsumed;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
+	private boolean destroyTowers = false;
 	private TowerType selectedTower = null;
 	private Path path;
 
@@ -74,6 +76,29 @@ public class Game {
 		particleSystem = new ParticleSystem();
 		this.addGameObject(particleSystem);
 		enemies = new ArrayList<>();
+
+		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), -2) {
+			{
+				setSprite(new Sprite(100, "particle_bomb"));
+			}
+
+			@Override
+			public float getPriority() {
+				return 100;
+			}
+
+			@Override
+			public void update(Game game) {
+				if (destroyTowers) {
+					hitBox.x = mouseFieldX;
+					hitBox.y = mouseFieldY;
+					hitBox.height = 1;
+					hitBox.width = 1;
+				} else {
+					hitBox.width = 0;
+				}
+			}
+		});
 
 		this.addGameObject(new BasicDrawingEntity(new HitBox(0, 0, 1, 1), 5) {
 			private Tower mouseOverTower;
@@ -237,10 +262,49 @@ public class Game {
 		menu.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
 		if (keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
-		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) selectedTower = null;
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) {
+			selectedTower = null;
+			destroyTowers = false;
+		}
 
 		if (!mouseConsumed && keyboard.isPressed(Keyboard.MOUSE_BUTTON_MIDDLE))
 			cameraController.setCameraMovement(last[0] - curr[0], last[1] - curr[1]);
+
+		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && destroyTowers && !mouseConsumed) {
+			if (path.getTower(mouseFieldX, mouseFieldY) == null) {
+				createErrorText("You cannot destroy this");
+				getCamera().addScreenshake(0.02f);
+			} else {
+				Tower tower = path.getTower(mouseFieldX, mouseFieldY);
+				this.removeGameObject(tower);
+				path.removeTower(mouseFieldX, mouseFieldY);
+
+				getCamera().addScreenshake(0.01f);
+				particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
+
+				materials.get(Material.GOLD).add(tower.getType().getGoldCosts()/2);
+				materials.get(Material.STONE).add(tower.getType().getStoneCosts()/2);
+				materials.get(Material.WOOD).add(tower.getType().getWoodCosts()/2);
+
+				int gt = getGameTick();
+				this.addGameObject(new BasicDrawingEntity(new HitBox(mouseFieldX, mouseFieldY, 1, 2), 0) {
+					{
+						setSprite(tower.getType().getSprite());
+					}
+					@Override
+					public float getPriority() {
+						return 0;
+					}
+
+					@Override
+					public void update(Game game) {
+						setColor(new float[] {0, 0, 0, 1-1.0f*(game.getGameTick()-gt)/(ParticleType.EXPLOSION.getLifeTime())});
+						if (game.getGameTick() >= gt + (ParticleType.EXPLOSION.getLifeTime())) removeGameObject(this);
+					}
+				});
+			}
+		}
+
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_1) && (lastMouseClickTick + 1 != gameTick) && selectedTower != null && !mouseConsumed) {
 			if (mouseFieldX >= path.getWidth() || mouseFieldX < 0 || mouseFieldY < 0 || mouseFieldY >= path.getHeight() || path.isBlocked(mouseFieldX, mouseFieldY)) {
 				createErrorText("You cannot place this here");
@@ -339,6 +403,12 @@ public class Game {
 	}
 
 	public void setSelectedTower(TowerType selectedTower) {
+		destroyTowers = false;
 		this.selectedTower = selectedTower;
+	}
+
+	public void setDestroyTowers() {
+		this.destroyTowers = !destroyTowers;
+		selectedTower = null;
 	}
 }

@@ -73,7 +73,7 @@ public class Enemy extends BasicMovingEntity {
 		this.hitBox.x = newPos[0];
 		this.hitBox.y = newPos[1];
 
-		setDrawingPriority(hitBox.y - game.getPath().getHeight());
+		setDrawingPriority(hitBox.y / game.getPath().getHeight());
 	}
 
 	private void updateColor() {
