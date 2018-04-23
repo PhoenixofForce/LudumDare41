@@ -44,7 +44,7 @@ public class Game {
 	private ClickBar click;
 
 	private int mouseFieldX, mouseFieldY;
-	private boolean mouseConsumed, mouseConsumed2;
+	private boolean mouseConsumed;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
 	private boolean destroyTowers = false;
@@ -101,7 +101,7 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
-				if (destroyTowers) {
+				if (destroyTowers && !mouseConsumed) {
 					hitBox.x = mouseFieldX;
 					hitBox.y = mouseFieldY;
 					hitBox.height = 1;
@@ -126,7 +126,7 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
-				if (selectedTower != null) {
+				if (selectedTower != null && !mouseConsumed) {
 					hitBox.x = mouseFieldX + 0.5f - selectedTower.getRange();
 					hitBox.y = mouseFieldY + 0.5f - selectedTower.getRange();
 					hitBox.width = selectedTower.getRange() * 2;
@@ -158,7 +158,7 @@ public class Game {
 
 			@Override
 			public void update(Game game) {
-				if (selectedTower == null) {
+				if (selectedTower == null || mouseConsumed) {
 					hitBox.width = 0;
 				} else {
 					setSprite(selectedTower.getSprite());
@@ -274,13 +274,13 @@ public class Game {
 
 		int[] curr = {keyboard.getMouseX(), window.getHeight() - keyboard.getMouseY()};
 		int[] last = {keyboard.getLastMouseX(), window.getHeight() - keyboard.getLastMouseY()};
-		mouseFieldX = (int) (getCamera().getX() + 2 * (curr[0] - window.getWidth() / 2) / getCamera().getZoom() / window.getHeight());
-		mouseFieldY = (int) (getCamera().getY() + 2 * (curr[1] - window.getHeight() / 2) / getCamera().getZoom() / window.getHeight());
+		mouseFieldX = (int) Math.floor(getCamera().getX() + 2 * (curr[0] - window.getWidth() / 2) / getCamera().getZoom() / window.getHeight());
+		mouseFieldY = (int) Math.floor(getCamera().getY() + 2 * (curr[1] - window.getHeight() / 2) / getCamera().getZoom() / window.getHeight());
 
 		mouseConsumed = menu.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight() - 1);
 		menu.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
-		mouseConsumed2 = click.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight()+0.9f);
+		mouseConsumed |= click.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight()-1);
 		click.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
 		if (keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
@@ -304,9 +304,10 @@ public class Game {
 				getCamera().addScreenshake(0.01f);
 				particleSystem.createParticle(ParticleType.EXPLOSION, mouseFieldX+0.5f, mouseFieldY+0.5f, 0, 0);
 
-				materials.get(Material.GOLD).add(Math.round(tower.getType().getGoldCosts() * (0.5f + 1.15f * getTowerCount(selectedTower) /2.0f)));
-				materials.get(Material.STONE).add(Math.round(tower.getType().getStoneCosts() * (0.5f + 1.15f * getTowerCount(selectedTower) /2.0f)));
-				materials.get(Material.WOOD).add(Math.round(tower.getType().getWoodCosts() * (0.5f + 1.15f * getTowerCount(selectedTower) /2.0f)));
+				double factor = Math.pow(1.15, getTowerCount(selectedTower));
+				materials.get(Material.GOLD).add((int) Math.round(tower.getType().getGoldCosts() * factor/2));
+				materials.get(Material.STONE).add((int) Math.round(tower.getType().getStoneCosts() * factor/2));
+				materials.get(Material.WOOD).add((int) Math.round(tower.getType().getWoodCosts() * factor/2));
 
 				int gt = getGameTick();
 				this.addGameObject(new BasicDrawingEntity(new HitBox(mouseFieldX, mouseFieldY, 1, 2), 0) {

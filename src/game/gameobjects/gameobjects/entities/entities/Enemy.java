@@ -52,7 +52,8 @@ public class Enemy extends BasicMovingEntity {
 	public void update(Game game) {
 		super.update(game);
 
-		for (Effects e : effectDurations.keySet()) {
+		for (Object e2 : effectDurations.keySet().toArray()) {
+			Effects e = (Effects) e2;
 			if (game.getGameTick() % 60 == 0) effectDurations.put(e, effectDurations.get(e) - 1);
 			if (effectDurations.get(e) == 0) effectDurations.remove(e);
 			updateColor();

@@ -5,6 +5,7 @@ import game.gameobjects.AbstractGameObject;
 import game.gameobjects.Material;
 import game.util.TextureHandler;
 import game.window.Drawable;
+import game.window.Keyboard;
 import game.window.Window;
 import game.window.shader.ShaderType;
 import game.window.shader.shader.BasicShader;
@@ -16,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ClickBar extends AbstractGameObject implements Drawable {
-	public static final float BORDER = 0.042f;
-	public static final float SIZE = 0.1f;
+	public static final float BORDER = 0.0f;
+	public static final float SIZE = 0.3f;
 	public static final float[] NO_HIGHTLIGHT_COLOR = new float[]{0, 0, 0, 1};
 	public static final float[] HIGHTLIGHT_COLOR = new float[]{0.125f, 0.125f, 0.125f, 1};
 	private MenuRow mainToolBar = new MenuRow(null, SIZE);
@@ -99,10 +100,10 @@ public class ClickBar extends AbstractGameObject implements Drawable {
 	}
 
 	private MenuRow getMousedMenuRow(float x, float y) {
-		float ty = 1;
+		float ty = -1;
 		for (MenuRow menuRow: menuRows) {
-			ty -= menuRow.getHeight();
-			if (y > ty + menuRow.getHeight() || y < ty) continue;
+			ty += menuRow.getHeight();
+			if (y > ty  || y < ty - menuRow.getHeight()) continue;
 
 			float w = menuRow.getWidth();
 			if (x >= (menuRow.x - w/2)/game.getWindow().getAspectRatio() && x <= (menuRow.x + w/2)/ (game.getWindow().getAspectRatio())) {
@@ -117,10 +118,10 @@ public class ClickBar extends AbstractGameObject implements Drawable {
 		MenuShader menuShader = (MenuShader) window.getShaderHandler().getShader(ShaderType.MENU_SHADER);
 		BasicShader basicShader = (BasicShader) window.getShaderHandler().getShader(ShaderType.BASIC_SHADER);
 
-		float y = -0.9f;
+		float y = -1;
 		for (MenuRow menuRow: menuRows) {
+			y += menuRow.getHeight();
 			menuRow.draw(window, basicShader, menuShader, y);
-			y -= menuRow.getHeight();
 		}
 	}
 
@@ -150,7 +151,7 @@ public class ClickBar extends AbstractGameObject implements Drawable {
 		}
 
 		void draw(Window window, BasicShader shader1, MenuShader shader2, float y) {
-			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size(), window.getAspectRatio());
+			//shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size(), window.getAspectRatio(), SIZE, BORDER);
 
 			float x2 = (x - getWidth()/2)+4*BORDER*SIZE;
 			for (MenuItem item: items) {
@@ -218,12 +219,14 @@ public class ClickBar extends AbstractGameObject implements Drawable {
 
 		@Override
 		public void draw(Window window, BasicShader shader1, MenuShader shader2, float x, float y, float height) {
-			shader1.draw((x+ BORDER*getWidth()) / window.getAspectRatio(), y-height*(1-BORDER), (1-2*BORDER)*getWidth() / window.getAspectRatio(), height*(1-2*BORDER), r.x, r.y, r.width, r.height, false, hightlighted == this ? HIGHTLIGHT_COLOR : NO_HIGHTLIGHT_COLOR);
+			float border = BORDER;
+			if (hightlighted == this && game.getWindow().getKeyboard().isPressed(Keyboard.MOUSE_BUTTON_1)) border = 0.0625f;
+			shader1.draw((x+ border*getWidth()) / window.getAspectRatio(), y-height*(1-border), (1-2*border)*getWidth() / window.getAspectRatio(), height*(1-2*border), r.x, r.y, r.width, r.height, false, hightlighted == this ? HIGHTLIGHT_COLOR : NO_HIGHTLIGHT_COLOR);
 		}
 
 		@Override
 		public float getWidth() {
-			return SIZE;
+			return 2*SIZE;
 		}
 
 		@Override

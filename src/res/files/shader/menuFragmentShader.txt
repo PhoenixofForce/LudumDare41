@@ -1,7 +1,7 @@
 #version 130
 
-const float border = 0.042;
-const float size = 0.1;
+uniform float border;
+uniform float size;
 
 uniform sampler2D tex;
 uniform int lightAmount;

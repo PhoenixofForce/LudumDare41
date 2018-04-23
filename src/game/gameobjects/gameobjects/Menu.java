@@ -175,7 +175,7 @@ public class Menu extends AbstractGameObject implements Drawable {
 		}
 
 		void draw(Window window, BasicShader shader1, MenuShader shader2, float y) {
-			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size(), window.getAspectRatio());
+			shader2.draw((x - getWidth()/2) / window.getAspectRatio(), y - getHeight(), getWidth() / window.getAspectRatio(), getHeight(), false, items.size(), window.getAspectRatio(), SIZE, BORDER);
 
 			float x2 = (x - getWidth()/2)+4*BORDER*SIZE;
 			for (MenuItem item: items) {

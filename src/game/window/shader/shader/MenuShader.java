@@ -11,7 +11,7 @@ public class MenuShader extends ShaderProgram {
 	private static final String BASIC_VERTEX_FILE = "menuVertexShader";
 
 	private int xLocation, yLocation, widthLocation, heightLocation;
-	private int useCameraLocation, amountLocation, screenRatioLocation;
+	private int useCameraLocation, amountLocation, screenRatioLocation, sizeLocation, borderLocation;
 
 	public MenuShader() {
 		super(BASIC_VERTEX_FILE, BASIC_FRAGMENT_FILE);
@@ -33,6 +33,8 @@ public class MenuShader extends ShaderProgram {
 		useCameraLocation = getUniformLocation("useCamera");
 		amountLocation = getUniformLocation("amount");
 		screenRatioLocation = getUniformLocation("screenRatio");
+		sizeLocation = getUniformLocation("size");
+		borderLocation = getUniformLocation("border");
 	}
 
 	/**
@@ -61,17 +63,26 @@ public class MenuShader extends ShaderProgram {
 		setUniform1i(amountLocation, amount);
 	}
 
+	public void setSize(float size) {
+		setUniform1f(sizeLocation, size);
+	}
+
+	public void setBorder(float border) {
+		setUniform1f(borderLocation, border);
+	}
 
 	public void setScreenRatio(float screenRatio) {
 		setUniform1f(screenRatioLocation, screenRatio);
 	}
 
-	public void draw(float x, float y, float width, float height, boolean useCamera, int amount, float screenRatio) {
+	public void draw(float x, float y, float width, float height, boolean useCamera, int amount, float screenRatio, float size, float border) {
 		start();
 		setBounds(x, y, width, height);
 		setUseCamera(useCamera);
 		setAmount(amount);
 		setScreenRatio(screenRatio);
+		setSize(size);
+		setBorder(border);
 		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 	}
 }
