@@ -9,6 +9,7 @@ import game.gameobjects.gameobjects.Menu;
 import game.gameobjects.gameobjects.Text;
 import game.gameobjects.gameobjects.cameracontroller.CameraController;
 import game.gameobjects.gameobjects.entities.BasicDrawingEntity;
+import game.gameobjects.gameobjects.entities.ClickBar;
 import game.gameobjects.gameobjects.entities.entities.Castle;
 import game.gameobjects.gameobjects.entities.entities.Enemy;
 import game.gameobjects.gameobjects.entities.entities.Tower;
@@ -40,9 +41,10 @@ public class Game {
 	private ParticleSystem particleSystem;            //display and store all particles
 	private CameraController cameraController;
 	private Menu menu;
+	private ClickBar click;
 
 	private int mouseFieldX, mouseFieldY;
-	private boolean mouseConsumed;
+	private boolean mouseConsumed, mouseConsumed2;
 	private Map<Material, GameMaterial> materials;
 	private List<Enemy> enemies;
 	private boolean destroyTowers = false;
@@ -200,6 +202,8 @@ public class Game {
 		this.menu = new Menu();
 		this.addGameObject(menu);
 
+		this.click = new ClickBar();
+		this.addGameObject(click);
 	}
 
 	/**
@@ -275,6 +279,9 @@ public class Game {
 
 		mouseConsumed = menu.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight() - 1);
 		menu.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
+
+		mouseConsumed2 = click.setMousePosition(2.0f * curr[0] / window.getWidth() - 1, 2.0f * curr[1] / window.getHeight()+0.9f);
+		click.setMouseClicked((lastMouseClickTick + 1 != gameTick) && keyboard.isPressed(Keyboard.MOUSE_BUTTON_1));
 
 		if (keyboard.isPressed(Keyboard.KEY_SPACE)) wave.nextWave();
 		if (keyboard.isPressed(Keyboard.MOUSE_BUTTON_2)) {
